@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+</head>
+
+
+
+<body style="background-color : RGB(5,26,34); overflow: hidden;">
+    <div class="row">
+        <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+            <canvas class="canvas" id="canvas" oncontextmenu="return false;"></canvas>
+        </div>
+        <div class="col-3">
+            <div class="bd-example">
+                <!--style="display: flex"-->
+
+
+
+                <table class="table table-hover" style="color: white;">
+                    <thead>
+                        <tr>
+                            <th scope="col" style="text-align: center;">Player</th>
+                            <th scope="col" style="text-align: center;"><img src="media/gold.png"></th>
+                    </thead>
+                    <tbody id="tableBody">
+                        <tr class="table-primary" id="player1" style="--bs-table-color: #3074f9; --bs-table-bg: black; --bs-table-hover-bg: #1f1f1f;--bs-table-hover-color: #3074f9;border: 3px green solid;">
+                            <th scope="row" style="text-align: center;">Blue</th>
+                            <td style="text-align: center;">0</td>
+                        </tr>
+                        <tr class="table-primary" id="player2" style="--bs-table-color: #66FFC0; --bs-table-bg: black; --bs-table-hover-bg: #1f1f1f;--bs-table-hover-color: #66FFC0; border: 3px green solid;">
+                            <th style="text-align: center;" scope="row">Teal</th>
+                            <td style="text-align: center;">0</td>
+                        </tr>
+                        <tr class="table-primary" id="player3" style="--bs-table-color: #BD00B7; --bs-table-bg: black; --bs-table-hover-bg: #1f1f1f;--bs-table-hover-color: #BD00B7;border: 3px green solid;">
+                            <th style="text-align: center;" scope="row">Purple</th>
+                            <td style="text-align: center;">0</td>
+                        </tr>
+                        <tr class="table-primary" id="player4" style="--bs-table-color: #F8F50A; --bs-table-bg: black;--bs-table-hover-bg: #1f1f1f;--bs-table-hover-color: #F8F50A;border: 3px green solid;">
+                            <th style="text-align: center;" scope="row">Yellow</th>
+                            <td style="text-align: center;">0</td>
+                        </tr>
+                        <tr class="table-primary" id="player5" style="--bs-table-color: #FF6901; --bs-table-bg: black; --bs-table-hover-bg: #1f1f1f;--bs-table-hover-color: #FF6901;border: 3px green solid;">
+                            <th style="text-align: center;" scope="row">Orange</th>
+                            <td style="text-align: center;">0</td>
+                        </tr>
+                        <tr class="table-primary" id="player6" style="--bs-table-color: #FF88C5; --bs-table-bg: black; --bs-table-hover-bg:#1f1f1f;--bs-table-hover-color: #FF88C5;border: 3px red solid;">
+                            <th style="text-align: center;" scope="row">Pink</th>
+                            <td style="text-align: center;">0</td>
+                        </tr>
+                        <tr class="table-primary" id="player7" style="--bs-table-color: #A2B349; --bs-table-bg: black;  --bs-table-hover-bg: #1f1f1f;--bs-table-hover-color: #A2B349;border: 3px red solid;">
+                            <th style="text-align: center;" scope="row">Olive</th>
+                            <td style="text-align: center;">0</td>
+                        </tr>
+                        <tr class="table-primary" id="player8" style="--bs-table-color: #63DAFA; --bs-table-bg: black;--bs-table-hover-bg: #1f1f1f;--bs-table-hover-color: #63DAFA;border: 3px red solid;">
+                            <th style="text-align: center;" scope="row">Sky Blue</th>
+                            <td style="text-align: center;">0</td>
+                        </tr>
+                        <tr class="table-primary" id="player9" style="--bs-table-color: #01831F; --bs-table-bg: black;--bs-table-hover-bg: #1f1f1f;--bs-table-hover-color: #01831F;border: 3px red solid;">
+                            <th style="text-align: center;" scope="row">Green</th>
+                            <td style="text-align: center;">0</td>
+                        </tr>
+                        <tr class="table-primary" id="player10" style="--bs-table-color: #9F6B00; --bs-table-bg: black;--bs-table-hover-bg: #1f1f1f;--bs-table-hover-color: #9F6B00;border: 3px red solid;">
+                            <th style="text-align: center;" scope="row">Brown</th>
+                            <td style="text-align: center;">0</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <input type="range" class="form-range" value="30" min="0" max="60" step="1" id="customRange3" -webkit-appearance: slider-vertical>
+            <a style="color: white;">Minutes: 30</a>
+        </div>
+
+    </div>
+    <script src="util.js"></script>
+    <script src="Curve.js"></script>
+    <script src="ClosedCurve.js"></script>
+    <script src="SpeedCounter.js"></script>
+    <script src="Camp.js"></script>
+    <script src="Area.js"></script>
+    <script src="Player.js"></script>
+    <script src="script.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+</body>
+
+</html>
