@@ -4,7 +4,11 @@ class ClosedCurve extends Curve {
         this.finished = false
     }
 
-    isPointInside({ point }) {
+    finish() {
+        this.finished = true
+    }
+
+    isPointInside(point) {
         let result = false;
         let j = this.points.length - 1;
         for (let i = 0; i < this.points.length; i++) {

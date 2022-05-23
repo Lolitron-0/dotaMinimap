@@ -1,5 +1,6 @@
-class Curve {
+class Curve extends IDrawable {
     constructor({ color }) {
+        super()
         this.points = []
         this.color = color
     }
@@ -20,7 +21,7 @@ class Curve {
 
     get length() {
         let sum = 0
-        for (let index = 0; index < this.points.length - 1; index++) {
+        for (let i = 0; i < this.points.length - 1; i++) {
             sum += this.points[i].distanceBetween(this.points[i + 1])
         }
         return sum

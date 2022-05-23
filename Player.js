@@ -1,63 +1,53 @@
-class Player extends Area {
+class Player {
 
     constructor({ id, team }) {
-        super({
-            color: document.getElementById(id).style.cssText.split(';')[0].split(':')[1] //get color
-        })
+        this.id = id
         this.row = document.getElementById(id);
         this.oldStyle = this.row.style.cssText;
-        this.goldCellHandle = this.row.children[1];
         this.team = team
-        this.gold = 0
-        this.speedCounter = new SpeedCounter({ color: this.color })
+        this.area = new Area({
+            color: this.oldStyle.split(';')[0].split(':')[1],
+            team: this.team
+        })
+        this.speedCounter = new SpeedCounter({
+            color: this.area.color
+        })
+        this.activeLogic = this.area
+        this.calculationResult = 0
         this.interactionMode = PlayerInteractionMode.AREAS
     }
 
-    switchToOldStyle() {
-        if (this.row.style.cssText != this.oldStyle) {
+    setSelected(value) {
+        if (value) {
+            this.row.style = SELECTED_STYLE
+        } else
             this.row.style.cssText = this.oldStyle;
-        }
+
+        this.activeLogic.isFocused = value
     }
 
-    //proceeds calculation according to interact mode
-    proceedCalculation() {
-        switch (this.interactionMode) {
+    switchTo(mode) {
+        this.interactionMode = mode
+        switch (mode) {
             case PlayerInteractionMode.AREAS:
-                this.proceedCampCalculation()
+                this.activeLogic = this.area
                 break;
-
             case PlayerInteractionMode.MS:
-
+                this.activeLogic = this.speedCounter
                 break;
             default:
                 break;
         }
-
     }
 
-    proceedMsCalculation() {
-        this.speedCounter.getTimeInMs(0) //TODO: some DOM controller value
+    draw() {
+        this.activeLogic.draw()
     }
 
 
-    proceedCampCalculation() {
-        this.gold = 0
-        camps.forEach(camp => {
-            if (this.isPointInside(new Point({
-                    x: camp.position.x + camp.size / 2,
-                    y: camp.position.y + camp.size / 2,
-                })) &&
-                camp.checked != this.team && camp.checked != 3) { //if its not already checked by that team and not checked by all
-                if (camp.checked == 0)
-                    camp.checked = this.team
-                else
-                    camp.checked = 3
-
-                this.gold += getCampGold(camp)
-                camp.size = Camp.enlargedSize
-            }
-        });
-        this.goldCellHandle.innerHTML = this.gold
+    proceedCalculation() {
+        this.calculationResult = this.activeLogic.calculate()
+        this.row.children[this.activeLogic.cellIndex].innerHTML = this.calculationResult
     }
 
 }
