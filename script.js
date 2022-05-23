@@ -9,7 +9,6 @@ canvas.height = document.documentElement.clientWidth / 2;
 const minimapImage = new Image();
 minimapImage.src = "media/Minimap.png";
 
-let selectedIndex = 0;
 
 const camps = []
     //mfs when camps init
@@ -214,7 +213,6 @@ window.onload = function() {
         const element = players[i];
 
         element.row.onclick = function() {
-            selectedIndex = i
             players.forEach(element => {
                 element.setSelected(false)
             });

@@ -1,14 +1,16 @@
 class Area extends BaseLogic {
 
+    _color = ""
+    _curves = []
+
     constructor({ color, team }) {
         super({ cellIndex: 1 })
-        this.color = color;
-        this.curves = [];
+        this._color = color;
         this.team = team
     }
 
     cleanUpSmall() {
-        this.curves = this.curves.filter((el) => el.points.length > 5)
+        this._curves = this._curves.filter((el) => el.points.length > 5)
     }
 
     onMouseDown(e) {
@@ -30,7 +32,7 @@ class Area extends BaseLogic {
     onMouseUp(e) {
         this.cleanUpSmall()
         if (e.button == MouseButtons.RIGHT) {
-            this.deleteCurves({
+            this.delete_curves({
                 x: e.pageX,
                 y: e.pageY
             })
@@ -60,11 +62,11 @@ class Area extends BaseLogic {
 
 
     //returns if anything was deleted
-    deleteCurves(point) {
+    delete_curves(point) {
         let deleted = false;
-        for (let i = this.curves.length - 1; i >= 0; i--) {
-            if (this.curves[i].isPointInside(point) && this.curves[i].finished) {
-                this.curves.splice(i, 1);
+        for (let i = this._curves.length - 1; i >= 0; i--) {
+            if (this._curves[i].isPointInside(point) && this._curves[i].finished) {
+                this._curves.splice(i, 1);
                 deleted = true;
                 break
             }
@@ -73,17 +75,17 @@ class Area extends BaseLogic {
     }
 
     finishAllCurves() {
-        this.curves.forEach(element => {
-            element.finished = true;
+        this._curves.forEach(element => {
+            element.finish();
         });
     }
 
     startNewCurve() {
-        this.curves.push(new ClosedCurve({ color: this.color }))
+        this._curves.push(new ClosedCurve({ color: this._color }))
     }
 
     addPoint(point) {
-        this.curves.forEach(element => {
+        this._curves.forEach(element => {
             if (!element.finished) {
                 element.addPoint(point)
             }
@@ -91,14 +93,14 @@ class Area extends BaseLogic {
     }
 
     draw() {
-        this.curves.forEach(element => {
+        this._curves.forEach(element => {
             element.draw()
         });
     }
 
     isPointInside(point) {
         let result = false
-        this.curves.forEach(element => {
+        this._curves.forEach(element => {
             if (element.isPointInside(point))
                 result = true
         });

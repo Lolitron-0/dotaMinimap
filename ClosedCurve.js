@@ -1,11 +1,17 @@
 class ClosedCurve extends Curve {
+
+    _finished = false
+
     constructor({ color }) {
         super({ color })
-        this.finished = false
+    }
+
+    get finished() {
+        return this._finished
     }
 
     finish() {
-        this.finished = true
+        this._finished = true
     }
 
     isPointInside(point) {
@@ -24,7 +30,7 @@ class ClosedCurve extends Curve {
 
     draw() {
         super.draw()
-        if (this.finished) {
+        if (this._finished) {
             cx.closePath()
         }
         cx.stroke();

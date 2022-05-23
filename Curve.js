@@ -1,16 +1,21 @@
 class Curve extends IDrawable {
+    _pointCounter = 0;
+    _color
+
     constructor({ color }) {
         super()
         this.points = []
-        this.color = color
+        this._color = color
     }
 
     addPoint(point) {
-        this.points.push(point);
+        if (this._pointCounter == 0)
+            this.points.push(point);
+        this._pointCounter = (this._pointCounter + 1) % 10;
     }
 
     draw() {
-        cx.strokeStyle = this.color
+        cx.strokeStyle = this._color
         cx.lineWidth = 3
         cx.moveTo(this.points[0].x, this.points[0].y)
         cx.beginPath();

@@ -1,39 +1,39 @@
 class Player {
 
+    _oldStyle = ""
+    _area = null
+    _speedCounter = null
+    _calculationResult = 0
+
     constructor({ id, team }) {
-        this.id = id
         this.row = document.getElementById(id);
-        this.oldStyle = this.row.style.cssText;
-        this.team = team
-        this.area = new Area({
-            color: this.oldStyle.split(';')[0].split(':')[1],
-            team: this.team
+        this._oldStyle = this.row.style.cssText;
+        this._area = new Area({
+            color: this._oldStyle.split(';')[0].split(':')[1],
+            team: team
         })
-        this.speedCounter = new SpeedCounter({
-            color: this.area.color
+        this._speedCounter = new SpeedCounter({
+            color: this._area.color
         })
-        this.activeLogic = this.area
-        this.calculationResult = 0
-        this.interactionMode = PlayerInteractionMode.AREAS
+        this.activeLogic = this._area
     }
 
     setSelected(value) {
         if (value) {
             this.row.style = SELECTED_STYLE
         } else
-            this.row.style.cssText = this.oldStyle;
+            this.row.style.cssText = this._oldStyle;
 
         this.activeLogic.isFocused = value
     }
 
     switchTo(mode) {
-        this.interactionMode = mode
         switch (mode) {
             case PlayerInteractionMode.AREAS:
-                this.activeLogic = this.area
+                this.activeLogic = this._area
                 break;
             case PlayerInteractionMode.MS:
-                this.activeLogic = this.speedCounter
+                this.activeLogic = this._speedCounter
                 break;
             default:
                 break;
@@ -46,8 +46,8 @@ class Player {
 
 
     proceedCalculation() {
-        this.calculationResult = this.activeLogic.calculate()
-        this.row.children[this.activeLogic.cellIndex].innerHTML = this.calculationResult
+        this._calculationResult = this.activeLogic.calculate()
+        this.row.children[this.activeLogic.cellIndex].innerHTML = this._calculationResult
     }
 
 }
