@@ -1,14 +1,54 @@
 const SELECTED_STYLE = "--bs-table-bg: black;  --bs-table-hover-bg: black; --bs-table-color: white; --bs-table-hover-color: white; border-color: transparent; "
+const EPSILON = 1e-9
+const GRAD_TO_RAD = 0.017
 
-
-class Point {
+class Point extends IDrawable {
     constructor({ x, y }) {
+        super()
         this.x = x
         this.y = y
     }
 
     distanceBetween(other) {
         return Math.sqrt(Math.pow(this.x - other.x, 2) + Math.pow(this.y - other.y, 2))
+    }
+
+    draw() {
+        cx.lineWidth = 2
+        cx.strokeStyle = "red"
+        cx.strokeRect(this.x, this.y, 2, 2)
+    }
+
+    equals(other) {
+        return this.x == other.x &&
+            this.y == other.y
+    }
+}
+
+class Segment extends IDrawable {
+    constructor({ start, end }) {
+        super()
+        this.start = start
+        this.end = end
+    }
+
+    draw(width, color) {
+        cx.lineWidth = width
+        cx.strokeStyle = color
+        cx.beginPath()
+        cx.moveTo(this.start.x, this.start.y)
+        cx.lineTo(this.end.x, this.end.y)
+        cx.stroke()
+    }
+    get length() {
+        return this.start.distanceBetween(this.end)
+    }
+
+    copy() {
+        return new Segment({
+            start: new Point({ x: this.start.x, y: this.start.y }),
+            end: new Point({ x: this.end.x, y: this.end.y }),
+        })
     }
 }
 
@@ -34,7 +74,15 @@ class PlayerInteractionMode {
     static MS = 1;
 }
 
-//point is {x,y}, rect is {x,y,w,h}
+class GroundLevel {
+    static RIVER = 0;
+    static LOW_GROUND = 1;
+    static HIGH_GROUND = 2;
+    static CLIFF = 3;
+    static CANT_PLACE = 4;
+}
+
+//rect is {x,y,w,h}
 function isPointInsideRect({ point, rect }) {
     return point.x >= rect.x &&
         point.x <= rect.x + rect.w &&
@@ -42,6 +90,81 @@ function isPointInsideRect({ point, rect }) {
         point.y <= rect.y + rect.h
 }
 
+function det(a, b, c, d) {
+    return a * d - b * c;
+}
+
+function between(a, b, c) {
+    return Math.min(a, b) <= c + EPSILON && c <= Math.max(a, b) + EPSILON;
+}
+
+function intersection1D(a, b, c, d) {
+    if (a > b)[a, b] = [b, a]
+    if (c > d)[c, d] = [d, c]
+    return Math.max(a, c) <= Math.min(b, d)
+}
+
+//function intersection2D(a, b) {
+//    let A1 = a.y - b.y,
+//        B1 = b.x - a.x,
+//        C1 = -A1 * a.x - B1 * a.y;
+//    let A2 = c.y - d.y,
+//        B2 = d.x - c.x,
+//        C2 = -A2 * c.x - B2 * c.y;
+//    let zn = det(A1, B1, A2, B2);
+//
+//    let intersectionPoint = null
+//
+//    if (zn != 0) {
+//        intersectionPoint = new Point({
+//            x: -det(C1, B1, C2, B2) * 1. / zn,
+//            y: -det(A1, C1, A2, C2) * 1. / zn
+//        })
+//    }
+//
+//    return intersectionPoint
+//}
+
+
+function isPointInsideSegment(seg, pt) {
+    if (seg == null || pt == null) return false
+    return between(0, EPSILON, seg.length - pt.distanceBetween(seg.start) - pt.distanceBetween(seg.end))
+}
+
+
+
+
+function intersection2D(a, b) {
+    let A1 = a.start.y - a.end.y,
+        B1 = a.end.x - a.start.x,
+        C1 = -A1 * a.start.x - B1 * a.start.y;
+    let A2 = b.start.y - b.end.y,
+        B2 = b.end.x - b.start.x,
+        C2 = -A2 * b.start.x - B2 * b.start.y;
+    let zn = det(A1, B1, A2, B2);
+
+    let intersectionPoint = null
+
+    if (zn != 0) {
+        intersectionPoint = new Point({
+            x: -det(C1, B1, C2, B2) * 1. / zn,
+            y: -det(A1, C1, A2, C2) * 1. / zn
+        })
+    }
+
+
+    return ((isPointInsideSegment(a, intersectionPoint) &&
+            isPointInsideSegment(b, intersectionPoint)) ?
+        intersectionPoint : null)
+}
+
+//alpha in grad
+function rotatePoint(origin, point, alpha) {
+    return new Point({
+        x: -Math.sin(alpha * GRAD_TO_RAD) * (point.y - origin.y) + Math.cos(alpha * GRAD_TO_RAD) * (point.x - origin.x) + origin.x,
+        y: Math.cos(alpha * GRAD_TO_RAD) * (point.y - origin.y) + Math.sin(alpha * GRAD_TO_RAD) * (point.x - origin.x) + origin.y
+    })
+}
 
 function resetCampCheckedState() {
     camps.forEach(camp => {
@@ -88,4 +211,18 @@ function getCampGold(camp) {
     }
 
     return Math.round(res)
+}
+
+
+function loadJSON(callback, file) {
+    var xobj = new XMLHttpRequest();
+    xobj.overrideMimeType("application/json");
+    xobj.open('GET', file, true);
+    xobj.onreadystatechange = function() {
+        if (xobj.readyState == 4 && xobj.status == "200") {
+            callback(xobj.responseText);
+        }
+    }
+    xobj.send(null);
+
 }

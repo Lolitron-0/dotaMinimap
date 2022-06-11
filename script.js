@@ -1,5 +1,6 @@
 let players = null
 let table = null
+let trees = []
 
 const canvas = document.querySelector('canvas')
 const cx = canvas.getContext('2d')
@@ -166,6 +167,8 @@ const timeSlider = document.querySelector('input')
 const matchTimeText = document.querySelector('a')
 
 
+warder = new Warder()
+
 //====================================================================
 
 
@@ -188,6 +191,28 @@ function refresh(e) {
         camp.draw()
     });
 
+    //for (let i = 0; i < trees.length; i++) {
+    //    const tree = trees[i];
+    //    tree.draw()
+    //}
+
+}
+
+function loadTrees() {
+    loadJSON(function(response) {
+        data = JSON.parse(response)
+        data.forEach(curve => {
+            current = new Tree({ level: GroundLevel.HIGH_GROUND })
+            curve.forEach(pair => {
+                current.addPoint(new Point({
+                    x: pair.split(' ')[0] * canvas.width,
+                    y: pair.split(' ')[1] * canvas.height
+                }), false)
+            });
+            trees.push(current)
+        });
+        refresh(null)
+    }, "collision.json")
 }
 
 //====================================================================
@@ -220,6 +245,7 @@ window.onload = function() {
         }
     }
 
+    loadTrees()
 
     refresh(null)
 };
@@ -242,12 +268,39 @@ timeSlider.onmousemove = function(e) {
     refresh(null)
 }
 
+window.onkeydown = function(e) {
+    if (e.code == 'KeyW') {
+        warder.isFocused = !warder.isFocused
+    }
+}
+
+
 canvas.onmousedown = function(e) {
     MOUSE_BUTTON_PRESSED = e.button
 
     players.forEach(player => {
         player.activeLogic.onMouseDown(e)
     });
+
+    if (MOUSE_BUTTON_PRESSED == MouseButtons.CENTRAL) {
+        let river = [players[0].activeLogic.getAllCurves(), GroundLevel.RIVER]
+        let lg = [players[1].activeLogic.getAllCurves(), GroundLevel.LOW_GROUND]
+        let hg = [players[2].activeLogic.getAllCurves(), GroundLevel.HIGH_GROUND]
+        let cliff = [players[3].activeLogic.getAllCurves(), GroundLevel.CLIFF]
+        let trees = [players[4].activeLogic.getAllCurves(), GroundLevel.CANT_PLACE]
+
+        let data = JSON.stringify([river, lg, hg, cliff, trees])
+
+        var blob = new Blob([data], { type: 'text/json' }),
+            e = document.createEvent('MouseEvents'),
+            a = document.createElement('a')
+
+        a.download = "collision.json"
+        a.href = window.URL.createObjectURL(blob)
+        a.dataset.downloadurl = ['text/json', a.download, a.href].join(':')
+        e.initMouseEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null)
+        a.dispatchEvent(e)
+    }
 
     for (let i = 0; i < camps.length; i++) { //dragging camps
         const element = camps[i]
@@ -282,4 +335,5 @@ canvas.onmouseup = function(e) {
 
 canvas.onmousemove = function(e) {
     refresh(e)
+    warder.onMouseMove(e)
 };

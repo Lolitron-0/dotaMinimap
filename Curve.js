@@ -8,10 +8,10 @@ class Curve extends IDrawable {
         this._color = color
     }
 
-    addPoint(point) {
-        if (this._pointCounter == 0)
+    addPoint(point, filter = false) {
+        if ((this._pointCounter == 0 && filter) || !filter)
             this.points.push(point);
-        this._pointCounter = (this._pointCounter + 1) % 10;
+        if (filter) this._pointCounter = (this._pointCounter + 1) % 4;
     }
 
     draw() {

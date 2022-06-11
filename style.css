@@ -1,3 +1,18 @@
-.canvas {
-    background-color: #eee;
-}
+    .canvas {
+        background-color: #eee;
+    }
+    
+    .button-select {
+        background-image: url("media/observer_ward.png");
+        background-size: 100%;
+        background-repeat: round;
+        width: 80px;
+        height: 50px;
+        border-radius: 5px;
+        border: none;
+        transition: all 350ms ease;
+    }
+    
+    .button-select:hover {
+        box-shadow: inset 0 0 0 2px rgb(255, 255, 255)
+    }

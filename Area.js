@@ -1,4 +1,4 @@
-class Area extends BaseLogic {
+class Area extends PlayerLogic {
 
     _color = ""
     _curves = []
@@ -9,19 +9,31 @@ class Area extends BaseLogic {
         this.team = team
     }
 
+    getAllCurves() {
+        let res = []
+        let curvPts = []
+        this._curves.forEach(curve => {
+            curve.points.forEach(point => {
+                curvPts.push(point.x / canvas.width + " " + point.y / canvas.height);
+            });
+            res.push(curvPts)
+            curvPts = []
+        });
+        return res
+    }
+
     cleanUpSmall() {
-        this._curves = this._curves.filter((el) => el.points.length > 5)
+        this._curves = this._curves.filter((el) => el.points.length >= 3)
     }
 
     onMouseDown(e) {
-        if (e.button == MouseButtons.LEFT &&
-            this.isFocused)
+        if (e.button == MouseButtons.LEFT && this.isFocused)
             this.startNewCurve()
     }
 
     onMouseMove(e) {
-        if (e.button == MouseButtons.LEFT &&
-            this.isFocused) {
+        super.onMouseMove(e)
+        if (e.button == MouseButtons.LEFT && this.isFocused) {
             this.addPoint(new Point({
                 x: e.pageX,
                 y: e.pageY
@@ -30,6 +42,7 @@ class Area extends BaseLogic {
     }
 
     onMouseUp(e) {
+        super.onMouseUp(e)
         this.cleanUpSmall()
         if (e.button == MouseButtons.RIGHT) {
             this.delete_curves({
@@ -87,7 +100,7 @@ class Area extends BaseLogic {
     addPoint(point) {
         this._curves.forEach(element => {
             if (!element.finished) {
-                element.addPoint(point)
+                element.addPoint(point, true)
             }
         });
     }
