@@ -11,7 +11,7 @@ class Curve extends IDrawable {
     addPoint(point, filter = false) {
         if ((this._pointCounter == 0 && filter) || !filter)
             this.points.push(point);
-        if (filter) this._pointCounter = (this._pointCounter + 1) % 4;
+        if (filter) this._pointCounter = (this._pointCounter + 1) % 2;
     }
 
     draw() {

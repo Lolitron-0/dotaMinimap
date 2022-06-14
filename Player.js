@@ -12,7 +12,7 @@ class Player {
             color: this._oldStyle.split(';')[0].split(':')[1],
             team: team
         })
-        this._speedCounter = new SpeedCounter({
+        this._speedCounter = new SpeedCounter({ 
             color: this._area.color
         })
         this.activeLogic = this._area

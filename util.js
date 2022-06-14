@@ -1,6 +1,14 @@
 const SELECTED_STYLE = "--bs-table-bg: black;  --bs-table-hover-bg: black; --bs-table-color: white; --bs-table-hover-color: white; border-color: transparent; "
 const EPSILON = 1e-9
 const GRAD_TO_RAD = 0.017
+let UNIT_TO_PX = 0 //lateinit
+const minimapImage = new Image();
+minimapImage.src = "media/Minimap.png";
+const dayTimerImage = new Image()
+dayTimerImage.src = "media/day_timer.png"
+const nightTimerImage = new Image()
+nightTimerImage.src = "media/night_timer.png"
+
 
 class Point extends IDrawable {
     constructor({ x, y }) {
@@ -82,8 +90,13 @@ class GroundLevel {
     static CANT_PLACE = 4;
 }
 
+class WardType {
+    static OBSERVER = 0;
+    static SENTRY = 1;
+}
+
 //rect is {x,y,w,h}
-function isPointInsideRect({ point, rect }) {
+function isPointInsideRect( point, rect ) {
     return point.x >= rect.x &&
         point.x <= rect.x + rect.w &&
         point.y >= rect.y &&

@@ -1,20 +1,51 @@
 class Warder extends BaseLogic {
     static radius = 100
+    static grad = 5
+    static observerImage = new Image();
+    static sentryImage = new Image();
     _wards = []
     constructor() {
         super()
+        this.type = WardType.OBSERVER
     }
 
     onMouseMove(e) {
         if (!this.isFocused) return
-        this.draw(new Point({
+        const mousePos=new Point({
             x: e.pageX,
             y: e.pageY
-        }))
+        })
+
+        this.traceRays(mousePos, true)
+
+        this._wards.forEach(ward => {
+            if(isPointInsideRect(mousePos, {
+                x: ward.position.x-Warder.observerImage.width/2,
+                y: ward.position.y-Warder.observerImage.height/2,
+                w: Warder.observerImage.width,
+                h: Warder.observerImage.height,
+            })){
+                console.log("object");
+            }
+        });
     }
 
+    onMouseDown(e) {
+        if (!this.isFocused) return
+        const pos = new Point({
+            x: e.pageX,
+            y: e.pageY
+        })
 
-    draw(startPoint) {
+        this._wards.push({
+            position: pos,
+            icon: this.type == WardType.OBSERVER ? Warder.observerImage : Warder.sentryImage,
+            rays: this.traceRays(pos, false)
+        })
+    }
+
+    //tracing the rays, returns traced arcs
+    traceRays(startPoint, draw = false) {
         const currentRay = new Segment({
             start: startPoint,
             end: new Point({
@@ -22,7 +53,10 @@ class Warder extends BaseLogic {
                 y: startPoint.y
             })
         })
-        for (let i = 0; i <= 369; i += .5) {
+
+        const rays = []
+        if (draw) cx.beginPath()
+        for (let i = 0; i <= 369; i += Warder.grad) {
             let cutted = null
             for (let i = 0; i < trees.length; i++) {
                 const tree = trees[i];
@@ -39,14 +73,39 @@ class Warder extends BaseLogic {
                 }
             }
 
-            if (cutted == null) //if no intersection
-                currentRay.draw(1, "rgba(255, 255, 0, 0.2)")
-            else
-                cutted.draw(1, "rgba(255, 255, 0, 0.2)")
+            if (cutted == null) { //if no intersection
+                if (draw) cx.arc(startPoint.x, startPoint.y, currentRay.length, (i + 180) * GRAD_TO_RAD, (i + 180 + Warder.grad) * GRAD_TO_RAD)
+                rays.push(currentRay.copy())
+            } else {
+                if (draw) cx.arc(startPoint.x, startPoint.y, cutted.length, (i + 180) * GRAD_TO_RAD, (i + 180 + Warder.grad) * GRAD_TO_RAD)
+                rays.push(cutted)
+            }
+            const image = new Image()
 
 
-            currentRay.end = rotatePoint(currentRay.start, currentRay.end, .5)
+            currentRay.end = rotatePoint(currentRay.start, currentRay.end, Warder.grad)
         }
+        if (draw) {
+            cx.fillStyle = "rgba(255, 255, 0, 0.3)"
+            cx.fill()
+        }
+
+        return rays
+    }
+
+    draw() {
+        if (!this.isFocused) return
+        this._wards.forEach(ward => {
+            cx.drawImage(ward.icon, ward.position.x - Warder.observerImage.width / 2, ward.position.y - Warder.observerImage.height / 2)
+            cx.beginPath()
+            cx.fillStyle = "rgba(255, 255, 0, 0.3)"
+            for (let i = 0; i < ward.rays.length; i++) {
+                const ray = ward.rays[i];
+                cx.arc(ward.position.x, ward.position.y, ray.length, (i * Warder.grad + 180) * GRAD_TO_RAD, (i * Warder.grad + 180 + Warder.grad) * GRAD_TO_RAD)
+            }
+
+            cx.fill()
+        });
     }
 
 }

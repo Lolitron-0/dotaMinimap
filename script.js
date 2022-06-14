@@ -1,15 +1,12 @@
 let players = null
 let table = null
 let trees = []
+const warder = new Warder()
 
 const canvas = document.querySelector('canvas')
 const cx = canvas.getContext('2d')
 canvas.width = document.documentElement.clientWidth / 2;
 canvas.height = document.documentElement.clientWidth / 2;
-
-const minimapImage = new Image();
-minimapImage.src = "media/Minimap.png";
-
 
 const camps = []
     //mfs when camps init
@@ -166,9 +163,6 @@ camps.push(new Camp({
 const timeSlider = document.querySelector('input')
 const matchTimeText = document.querySelector('a')
 
-
-warder = new Warder()
-
 //====================================================================
 
 
@@ -181,20 +175,24 @@ function refresh(e) {
     resetCampCheckedState();
 
     cx.drawImage(minimapImage, 0, 0, canvas.width, canvas.height);
+    drawTimer()
 
     players.forEach(player => {
         player.proceedCalculation()
         player.draw()
     });
 
+    if (e != null) warder.onMouseMove(e)
+
     camps.forEach(camp => {
         camp.draw()
     });
 
-    //for (let i = 0; i < trees.length; i++) {
-    //    const tree = trees[i];
-    //    tree.draw()
-    //}
+    warder.draw()
+        //for (let i = 0; i < trees.length; i++) {
+        //    const tree = trees[i];
+        //    tree.draw()
+        //}
 
 }
 
@@ -248,6 +246,15 @@ window.onload = function() {
     loadTrees()
 
     refresh(null)
+
+    UNIT_TO_PX = canvas.width / 15000
+
+    var b = document.getElementById("wardmode");
+    b.setAttribute("state", "obs");
+    b.style.background = 'url(media/observer_wards.png)';
+    Warder.observerImage.src = "media/obs_icon.png"
+    Warder.sentryImage.src = "media/sentry_icon.png"
+
 };
 
 
@@ -259,7 +266,14 @@ window.onresize = function() {
         element.resize()
     });
 
+    UNIT_TO_PX = canvas.width / 15000
+    loadTrees();
     refresh(null)
+}
+
+
+window.onkeydown = function(e) {
+    warder.isFocused = !warder.isFocused
 }
 
 
@@ -268,9 +282,29 @@ timeSlider.onmousemove = function(e) {
     refresh(null)
 }
 
-window.onkeydown = function(e) {
-    if (e.code == 'KeyW') {
+
+/*document.getElementById("ios-toggle").onclick = function() {
         warder.isFocused = !warder.isFocused
+        if (document.getElementById("ios-toggle").checked) {
+            document.getElementById("ward-btn").style.background = 'url("media/sentry_wards.png")';
+            document.getElementById("ward-btn").style.backgroundRepeat = 'round';
+            document.getElementById("ward-btn").style.backgroundSize = '100%';
+        } else {
+            document.getElementById("ward-btn").style.background = 'url("media/observer_wards.png")';
+        }
+
+    } */
+document.getElementById("wardmode").onclick = function() {
+    console.log(document.getElementById("wardmode").attributes.state)
+
+    if (document.getElementById("wardmode").getAttribute("state") == "obs") {
+        console.log("asda");
+        document.getElementById("wardmode").setAttribute("state", "sentry");
+        document.getElementById("wardmode").style.background = 'url(media/sentry_wards.png)';
+    } else if (document.getElementById("wardmode").getAttribute("state") == "sentry") {
+        console.log("object");
+        document.getElementById("wardmode").setAttribute("state", "obs");
+        document.getElementById("wardmode").style.background = 'url(media/observer_wards.png)';
     }
 }
 
@@ -281,6 +315,7 @@ canvas.onmousedown = function(e) {
     players.forEach(player => {
         player.activeLogic.onMouseDown(e)
     });
+    warder.onMouseDown(e)
 
     if (MOUSE_BUTTON_PRESSED == MouseButtons.CENTRAL) {
         let river = [players[0].activeLogic.getAllCurves(), GroundLevel.RIVER]
@@ -305,18 +340,18 @@ canvas.onmousedown = function(e) {
     for (let i = 0; i < camps.length; i++) { //dragging camps
         const element = camps[i]
         if (e.button == 0)
-            if (isPointInsideRect({
-                    point: {
+            if (isPointInsideRect(
+                    new Point({
                         x: e.pageX,
                         y: e.pageX,
-                    },
-                    rect: {
+                    }),
+                    {
                         x: element.position.x,
                         y: element.position.y,
                         w: element.size,
                         h: element.size,
                     }
-                })) {
+                )) {
                 element.hold = true;
                 break;
             }
@@ -335,5 +370,21 @@ canvas.onmouseup = function(e) {
 
 canvas.onmousemove = function(e) {
     refresh(e)
-    warder.onMouseMove(e)
 };
+
+
+//==========================================================================================
+
+function drawTimer() {
+
+    if (Math.floor(timeSlider.value / 5) % 2 == 0) {
+        cx.drawImage(dayTimerImage, canvas.width / 2 - dayTimerImage.width / 2, 0)
+    } else {
+        cx.drawImage(nightTimerImage, canvas.width / 2 - nightTimerImage.width / 2, 0)
+    }
+
+    cx.font = '16px serif'
+    cx.strokeStyle = 'white'
+    cx.lineWidth = 1
+    cx.strokeText(timeSlider.value + ":00", canvas.width / 2 - dayTimerImage.width / 4.5, dayTimerImage.height - dayTimerImage.height / 4.5)
+}
