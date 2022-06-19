@@ -24,6 +24,10 @@ class Curve extends IDrawable {
         }
     }
 
+    clear(){
+        this.points = []
+    }
+
     get length() {
         let sum = 0
         for (let i = 0; i < this.points.length - 1; i++) {
