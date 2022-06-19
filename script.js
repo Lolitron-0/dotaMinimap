@@ -248,6 +248,7 @@ window.onload = function() {
     refresh(null)
 
     UNIT_TO_PX = canvas.width / 15000
+    Warder.radius = 1600 * UNIT_TO_PX
 
     var b = document.getElementById("wardmode");
     b.setAttribute("state", "obs");
@@ -267,6 +268,7 @@ window.onresize = function() {
     });
 
     UNIT_TO_PX = canvas.width / 15000
+    Warder.radius = 1600 * UNIT_TO_PX
     loadTrees();
     refresh(null)
 }
@@ -278,7 +280,6 @@ window.onkeydown = function(e) {
 
 
 timeSlider.onmousemove = function(e) {
-    matchTimeText.innerHTML = "Minutes: " + timeSlider.value;
     refresh(null)
 }
 
@@ -295,16 +296,13 @@ timeSlider.onmousemove = function(e) {
 
     } */
 document.getElementById("wardmode").onclick = function() {
-    console.log(document.getElementById("wardmode").attributes.state)
-
-    if (document.getElementById("wardmode").getAttribute("state") == "obs") {
-        console.log("asda");
-        document.getElementById("wardmode").setAttribute("state", "sentry");
-        document.getElementById("wardmode").style.background = 'url(media/sentry_wards.png)';
+    let btn = document.getElementById("wardmode")
+    if (btn.getAttribute("state") == "obs") {
+        btn.setAttribute("state", "sentry");
+        btn.style.background = 'url(media/sentry_wards.png)';
     } else if (document.getElementById("wardmode").getAttribute("state") == "sentry") {
-        console.log("object");
-        document.getElementById("wardmode").setAttribute("state", "obs");
-        document.getElementById("wardmode").style.background = 'url(media/observer_wards.png)';
+        btn.setAttribute("state", "obs");
+        btn.style.background = 'url(media/observer_wards.png)';
     }
 }
 

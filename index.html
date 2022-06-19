@@ -18,7 +18,7 @@
         <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
             <canvas class="canvas" id="canvas" oncontextmenu="return false;"></canvas>
         </div>
-        <div class="col-3">
+        <div class="col-3" style="display: block; bottom: m; " >
             <div class="bd-example">
                 <table class="table table-hover" style="color: white;">
                     <thead>
@@ -70,12 +70,12 @@
                     </tbody>
                 </table>
             </div>
-            <input type="range" class="form-range" value="30" min="0" max="60" step="1" id="customRange3" -webkit-appearance: slider-vertical>
-            <a style="color: white">Minutes: 30</a>
+            <input type="range" class="form-range" value="30" min="10" max="60" step="1" id="customRange3" -webkit-appearance: slider-vertical>
             <br>
-
-            <button class="tool-button" id="wardmode" state="obs"></button>
-            <button class="tool-button" id="wardmode" state="obs">GPM</button>
+            <div style="">
+                <button class="tool-button" id="wardmode" state="obs"></button>
+                <button class="tool-button" id="areamode" ></button>
+            </div>
         </div>
     </div>
     </div>

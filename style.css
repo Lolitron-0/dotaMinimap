@@ -18,6 +18,10 @@
         }
         
        
+        #areamode{
+            background: url("media/midas.png");
+            background-repeat: round;
+        }
         
         .tool-button {
             width: 5.5em;

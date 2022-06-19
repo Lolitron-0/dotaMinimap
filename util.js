@@ -226,7 +226,6 @@ function getCampGold(camp) {
     return Math.round(res)
 }
 
-
 function loadJSON(callback, file) {
     var xobj = new XMLHttpRequest();
     xobj.overrideMimeType("application/json");
@@ -237,5 +236,11 @@ function loadJSON(callback, file) {
         }
     }
     xobj.send(null);
+}
 
+let cross = new Image()
+cross.src = "media/cross.png"
+
+const DEFAULT_ICONS = {
+    CROSS:cross,
 }
