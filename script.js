@@ -308,7 +308,6 @@ window.onload = function () {
       ).style.transform = "scale(0.8)";
     };
   }
-awd
   loadTrees();
 
   refresh(null);
