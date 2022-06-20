@@ -1,7 +1,7 @@
 let players = null;
 let table = null;
 let lastSelected = 0;
-let LastSelectedMode = PlayerInteractionMode.AREAS;
+let lastSelectedMode = PlayerInteractionMode.AREAS;
 let trees = [];
 const warder = new Warder();
 
@@ -204,8 +204,7 @@ camps.push(
 );
 //#endregion
 
-const timeSlider = document.querySelector("input");
-const matchTimeText = document.querySelector("a");
+const timeSlider = document.getElementById("timeSlider");
 
 //====================================================================
 
@@ -303,7 +302,7 @@ window.onload = function () {
       lastSelected = i;
 
       document.getElementById(
-        LastSelectedMode == PlayerInteractionMode.AREAS
+        lastSelectedMode == PlayerInteractionMode.AREAS
           ? "areamode"
           : "speedmode"
       ).style.transform = "scale(0.8)";
@@ -324,6 +323,24 @@ window.onload = function () {
   b.style.background = "url(media/observer_wards.png)";
   Warder.observerImage.src = "media/obs_icon.png";
   Warder.sentryImage.src = "media/sentry_icon.png";
+
+  for (let i = 1; i <= 10; i++) {
+    let rowBox = document.getElementById("player" + i).getBoundingClientRect();
+    let slider = document.getElementById("range" + i);
+    let div = document.getElementById("range" + i + "div");
+    let text = document.getElementById("range" + i + "a");
+    if(i!=1)slider.style.display = "none"; // 1st is selected
+    div.style.top =
+      rowBox.y +
+      rowBox.height / 2 -
+      div.getBoundingClientRect().height / 2 +
+      "px";
+    slider.oninput = function () {
+      players[i - 1].setSpeedCounterMs(slider.value);
+      text.innerHTML = slider.value + "ms";
+      refresh(null);
+    };
+  }
 };
 
 const toolpanelIds = ["wardmode", "speedmode", "areamode"];
@@ -361,6 +378,7 @@ toolpanelIds.forEach((id) => {
         break;
 
       case "areamode":
+        lastSelectedMode = PlayerInteractionMode.AREAS;
         players.forEach((player) => {
           player.switchTo(PlayerInteractionMode.AREAS);
         });
@@ -368,6 +386,7 @@ toolpanelIds.forEach((id) => {
         break;
 
       case "speedmode":
+        lastSelectedMode = PlayerInteractionMode.MS;
         players.forEach((player) => {
           player.switchTo(PlayerInteractionMode.MS);
         });
@@ -409,11 +428,26 @@ canvas.onmousedown = function (e) {
   warder.onMouseDown(e);
 
   if (MOUSE_BUTTON_PRESSED == MouseButtons.CENTRAL) {
-    let river = [players[0].activeLogic.getAllCurves(), GroundLevel.RIVER];
-    let lg = [players[1].activeLogic.getAllCurves(), GroundLevel.LOW_GROUND];
-    let hg = [players[2].activeLogic.getAllCurves(), GroundLevel.HIGH_GROUND];
-    let cliff = [players[3].activeLogic.getAllCurves(), GroundLevel.CLIFF];
-    let trees = [players[4].activeLogic.getAllCurves(), GroundLevel.CANT_PLACE];
+    let river = {
+      trees: players[0]._area.getAllCurves(),
+      level: GroundLevel.RIVER,
+    };
+    let lg = {
+      trees: players[1]._area.getAllCurves(),
+      level: GroundLevel.LOW_GROUND,
+    };
+    let hg = {
+      trees: players[2]._area.getAllCurves(),
+      level: GroundLevel.HIGH_GROUND,
+    };
+    let cliff = {
+      trees: players[3]._area.getAllCurves(),
+      level: GroundLevel.CLIFF,
+    };
+    let trees = {
+      trees: players[4]._area.getAllCurves(),
+      level: GroundLevel.CANT_PLACE,
+    };
 
     let data = JSON.stringify([river, lg, hg, cliff, trees]);
 

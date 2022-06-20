@@ -1,15 +1,14 @@
 class BaseLogic extends IDrawable {
-    constructor() {
-        super()
-        this.isFocused = false
-    }
+  constructor() {
+    super();
+    this.isFocused = false;
+  }
 
-    calculate() {}
+  calculate() {}
 
-    onMouseMove(e) {}
+  onMouseMove(e) {}
 
-    onMouseDown(e) {}
+  onMouseDown(e) {}
 
-    onMouseUp(e) {}
-
+  onMouseUp(e) {}
 }

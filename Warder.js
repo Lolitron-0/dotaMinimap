@@ -63,24 +63,21 @@ class Warder extends BaseLogic {
     });
 
     const rays = [];
+    const treesToTrace = this.determineProcessObjects(startPoint);
     if (draw) cx.beginPath();
     for (let i = 0; i <= 369; i += Warder.grad) {
       let cutted = null;
-      for (let i = 0; i < trees.length; i++) {
-        const tree = trees[i];
+      for (let i = 0; i < treesToTrace.length; i++) {
+        const tree = treesToTrace[i];
         if (!tree.isPointInside(currentRay.start)) {
           let ray = tree.getTracedRay(currentRay);
-          document.body.style.cursor = "crosshair";
 
           if (
             !ray.end.equals(currentRay.end) && //if ray had intersection
-            (cutted == null || cutted.length > ray.length)
+            (cutted == null || cutted.length > ray.length) // and its length is less than saved
           ) {
-            // and its length is less than saved
             cutted = ray;
           }
-        } else {
-          document.body.style.cursor = "not-allowed";
         }
       }
 
@@ -132,11 +129,14 @@ class Warder extends BaseLogic {
     let maxLevel = -1;
     let maxTree = null;
     trees.forEach((tree) => {
-        if (tree.isPointInside(point) && tree.level > maxLevel) maxTree = tree;
+      if (tree.isPointInside(point) && tree.level > maxLevel) maxTree = tree;
     });
     const resultObjects = [];
+    trees.forEach((tree) => {
+      if (maxTree.isCurveInside(tree)) resultObjects.push(tree);
+    });
 
-
+    return resultObjects;
   }
 
   draw() {

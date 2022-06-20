@@ -1,43 +1,53 @@
 class ClosedCurve extends Curve {
+  _finished = false;
 
-    _finished = false
+  constructor({ color }) {
+    super({ color });
+  }
 
-    constructor({ color }) {
-        super({ color })
+  get finished() {
+    return this._finished;
+  }
+
+  finish() {
+    this._finished = true;
+  }
+
+  isPointInside(point) {
+    let result = false;
+    let j = this.points.length - 1;
+    for (let i = 0; i < this.points.length; i++) {
+      if (
+        ((this.points[i].y < point.y && this.points[j].y >= point.y) ||
+          (this.points[j].y < point.y && this.points[i].y >= point.y)) &&
+        this.points[i].x +
+          ((point.y - this.points[i].y) *
+            (this.points[j].x - this.points[i].x)) /
+            (this.points[j].y - this.points[i].y) <
+          point.x
+      )
+        result = !result;
+
+      j = i;
     }
 
-    get finished() {
-        return this._finished
+    return result;
+  }
+
+  isCurveInside(curve) {
+    let ptsInside = 0;
+    curve.points.forEach((point) => {
+      if (this.isPointInside(point)) ptsInside++;
+    });
+
+    return ptsInside >= curve.points.length/2
+  }
+
+  draw() {
+    super.draw();
+    if (this._finished) {
+      cx.closePath();
     }
-
-    finish() {
-        this._finished = true
-    }
-
-    isPointInside(point) {
-        let result = false;
-        let j = this.points.length - 1;
-        for (let i = 0; i < this.points.length; i++) {
-            if ((this.points[i].y < point.y && this.points[j].y >= point.y || this.points[j].y < point.y && this.points[i].y >= point.y) &&
-                (this.points[i].x + (point.y - this.points[i].y) * (this.points[j].x - this.points[i].x) / (this.points[j].y - this.points[i].y) < point.x))
-                result = !result;
-
-            j = i;
-        }
-
-        return result;
-    }
-
-    isCurveInside(curve){
-
-    }
-    
-    draw() {
-        super.draw()
-        if (this._finished) {
-            cx.closePath()
-        }
-        cx.stroke();
-    }
-
+    cx.stroke();
+  }
 }

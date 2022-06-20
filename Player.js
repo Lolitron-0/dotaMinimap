@@ -6,6 +6,7 @@ class Player {
 
   constructor({ id, team }) {
     this.row = document.getElementById(id);
+    this._index = Number(id.replace("player", ""));
     this._oldStyle = this.row.style.cssText;
     this._area = new Area({
       color: this._oldStyle.split(";")[0].split(":")[1],
@@ -22,7 +23,15 @@ class Player {
       this.row.style = SELECTED_ROW_STYLE;
     } else this.row.style.cssText = this._oldStyle;
 
+    document.getElementById("range" + this._index).style.display = value
+      ? "initial"
+      : "none";
+
     this.activeLogic.isFocused = value;
+  }
+
+  setSpeedCounterMs(ms) {
+    this._speedCounter.ms = Number(ms);
   }
 
   switchTo(mode) {
@@ -38,8 +47,8 @@ class Player {
     }
   }
 
-  getMode(){
-    return Play
+  getMode() {
+    return Play;
   }
 
   draw() {

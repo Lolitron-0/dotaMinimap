@@ -13,7 +13,6 @@ class SpeedCounter extends PlayerLogic {
   }
 
   onMouseDown(e) {
-    if (!this.isFocused) return;
     const mousePos = new Point({
       x: e.pageX,
       y: e.pageY,
@@ -28,8 +27,6 @@ class SpeedCounter extends PlayerLogic {
   }
 
   onMouseMove(e) {
-    if (!this.isFocused) return;
-
     const mousePos = new Point({
       x: e.pageX,
       y: e.pageY,
@@ -42,6 +39,7 @@ class SpeedCounter extends PlayerLogic {
         break;
       } else this.curve.restoreColor();
     }
+    if (!this.isFocused) return;
 
     if (MOUSE_BUTTON_PRESSED == MouseButtons.LEFT) {
       this.curve.addPoint(mousePos, true);
