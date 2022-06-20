@@ -28,6 +28,10 @@ class ClosedCurve extends Curve {
         return result;
     }
 
+    isCurveInside(curve){
+
+    }
+    
     draw() {
         super.draw()
         if (this._finished) {

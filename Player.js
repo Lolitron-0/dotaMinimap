@@ -12,7 +12,7 @@ class Player {
       team: team,
     });
     this._speedCounter = new SpeedCounter({
-      color: this._area.color,
+      color: this._oldStyle.split(";")[0].split(":")[1],
     });
     this.activeLogic = this._area;
   }
@@ -38,8 +38,13 @@ class Player {
     }
   }
 
+  getMode(){
+    return Play
+  }
+
   draw() {
-    this.activeLogic.draw();
+    this._area.draw();
+    this._speedCounter.draw();
   }
 
   proceedCalculation() {

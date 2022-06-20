@@ -2,6 +2,7 @@ const SELECTED_ROW_STYLE = "--bs-table-bg: black;  --bs-table-hover-bg: black; -
 const EPSILON = 1e-9
 const GRAD_TO_RAD = 0.017
 let UNIT_TO_PX = 0 //lateinit
+let PX_TO_UNIT = 0 //lateinit
 const minimapImage = new Image();
 minimapImage.src = "media/Minimap.png";
 const dayTimerImage = new Image()
@@ -48,6 +49,7 @@ class Segment extends IDrawable {
         cx.lineTo(this.end.x, this.end.y)
         cx.stroke()
     }
+
     get length() {
         return this.start.distanceBetween(this.end)
     }

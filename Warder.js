@@ -128,12 +128,15 @@ class Warder extends BaseLogic {
     cx.fill();
   }
 
-  determineGroundLevel(point) {
+  determineProcessObjects(point) {
     let maxLevel = -1;
+    let maxTree = null;
     trees.forEach((tree) => {
-      if (tree.isPointInside(point)) {
-      }
+        if (tree.isPointInside(point) && tree.level > maxLevel) maxTree = tree;
     });
+    const resultObjects = [];
+
+
   }
 
   draw() {

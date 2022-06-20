@@ -1,5 +1,7 @@
 let players = null;
 let table = null;
+let lastSelected = 0;
+let LastSelectedMode = PlayerInteractionMode.AREAS;
 let trees = [];
 const warder = new Warder();
 
@@ -237,6 +239,7 @@ function refresh(e) {
 }
 
 function loadTrees() {
+  trees = [];
   loadJSON(function (response) {
     data = JSON.parse(response);
     data.forEach((curve) => {
@@ -293,6 +296,17 @@ window.onload = function () {
         element.setSelected(false);
       });
       element.setSelected(true);
+      toolpanelIds.forEach((id) => {
+        document.getElementById(id).style.transform = "scale(1)";
+        warder.isFocused = false;
+      });
+      lastSelected = i;
+
+      document.getElementById(
+        LastSelectedMode == PlayerInteractionMode.AREAS
+          ? "areamode"
+          : "speedmode"
+      ).style.transform = "scale(0.8)";
     };
   }
 
@@ -301,6 +315,7 @@ window.onload = function () {
   refresh(null);
 
   UNIT_TO_PX = canvas.width / 15000;
+  PX_TO_UNIT = 15000 / canvas.width;
   Warder.obsRadius = 1600 * UNIT_TO_PX;
   Warder.sentryRadius = 900 * UNIT_TO_PX;
 
@@ -346,13 +361,17 @@ toolpanelIds.forEach((id) => {
         break;
 
       case "areamode":
-        players[0].setSelected(true);
-        players[0].switchTo(PlayerInteractionMode.AREAS);
+        players.forEach((player) => {
+          player.switchTo(PlayerInteractionMode.AREAS);
+        });
+        players[lastSelected].setSelected(true);
         break;
 
       case "speedmode":
-        players[0].setSelected(true);
-        players[0].switchTo(PlayerInteractionMode.MS);
+        players.forEach((player) => {
+          player.switchTo(PlayerInteractionMode.MS);
+        });
+        players[lastSelected].setSelected(true);
         break;
 
       default:
@@ -370,14 +389,11 @@ window.onresize = function () {
   });
 
   UNIT_TO_PX = canvas.width / 15000;
+  PX_TO_UNIT = 15000 / canvas.width;
   Warder.obsRadius = 1600 * UNIT_TO_PX;
   Warder.sentryRadius = 900 * UNIT_TO_PX;
   loadTrees();
   refresh(null);
-};
-
-window.onkeydown = function (e) {
-  warder.isFocused = !warder.isFocused;
 };
 
 timeSlider.onmousemove = function (e) {
