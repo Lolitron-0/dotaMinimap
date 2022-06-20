@@ -241,18 +241,20 @@ function loadTrees() {
   trees = [];
   loadJSON(function (response) {
     data = JSON.parse(response);
-    data.forEach((curve) => {
-      current = new Tree({ level: GroundLevel.HIGH_GROUND });
-      curve.forEach((pair) => {
-        current.addPoint(
-          new Point({
-            x: pair.split(" ")[0] * canvas.width,
-            y: pair.split(" ")[1] * canvas.height,
-          }),
-          false
-        );
-      });
-      trees.push(current);
+    data.forEach((group) => {
+        group.trees.forEach(curve=>{
+            let current = new Tree({ level: group.level });
+            curve.forEach((pair) => {
+              current.addPoint(
+                new Point({
+                  x: pair.split(" ")[0] * canvas.width,
+                  y: pair.split(" ")[1] * canvas.height,
+                }),
+                false
+              );
+            });
+            trees.push(current);
+        })
     });
     refresh(null);
   }, "collision.json");

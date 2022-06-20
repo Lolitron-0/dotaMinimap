@@ -88,8 +88,8 @@ class GroundLevel {
     static RIVER = 0;
     static LOW_GROUND = 1;
     static HIGH_GROUND = 2;
-    static CLIFF = 3;
-    static CANT_PLACE = 4;
+    static CANT_PLACE = 3;
+    static CLIFF = 4;
 }
 
 class WardType {

@@ -64,20 +64,19 @@ class Warder extends BaseLogic {
 
     const rays = [];
     const treesToTrace = this.determineProcessObjects(startPoint);
+    if (treesToTrace == null) return [];
+
     if (draw) cx.beginPath();
     for (let i = 0; i <= 369; i += Warder.grad) {
       let cutted = null;
       for (let i = 0; i < treesToTrace.length; i++) {
         const tree = treesToTrace[i];
-        if (!tree.isPointInside(currentRay.start)) {
-          let ray = tree.getTracedRay(currentRay);
-
-          if (
-            !ray.end.equals(currentRay.end) && //if ray had intersection
-            (cutted == null || cutted.length > ray.length) // and its length is less than saved
-          ) {
-            cutted = ray;
-          }
+        let ray = tree.getTracedRay(currentRay);
+        if (
+          !ray.end.equals(currentRay.end) && //if ray had intersection
+          (cutted == null || cutted.length > ray.length) // and its length is less than saved
+        ) {
+          cutted = ray;
         }
       }
 
@@ -127,13 +126,16 @@ class Warder extends BaseLogic {
 
   determineProcessObjects(point) {
     let maxLevel = -1;
-    let maxTree = null;
     trees.forEach((tree) => {
-      if (tree.isPointInside(point) && tree.level > maxLevel) maxTree = tree;
+      if (tree.isPointInside(point) && tree.level > maxLevel)
+        maxLevel = tree.level;
     });
+
+    if (maxLevel == GroundLevel.CANT_PLACE) return null;
+
     const resultObjects = [];
     trees.forEach((tree) => {
-      if (maxTree.isCurveInside(tree)) resultObjects.push(tree);
+      if (tree.level > maxLevel) resultObjects.push(tree);
     });
 
     return resultObjects;
