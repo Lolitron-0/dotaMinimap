@@ -1,4 +1,4 @@
-const SELECTED_ROW_STYLE = "--bs-table-bg: black;  --bs-table-hover-bg: black; --bs-table-color: white; --bs-table-hover-color: white; border-color: transparent; "
+const SELECTED_ROW_STYLE = "--bs-table-bg: black;  --bs-table-hover-bg: black; --bs-table-color: white; --bs-table-hover-color: white; border-left: 3px white solid; "
 const EPSILON = 1e-9
 const GRAD_TO_RAD = 0.017
 let UNIT_TO_PX = 0 //lateinit
