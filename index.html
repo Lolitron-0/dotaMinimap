@@ -8,6 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="clock.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
 </head>
@@ -155,7 +156,19 @@
                 <input type="range"  id="range10" value="300" min="100" max="550" step="5">
             </div>
 
-
+            <div class="clock">
+                <div class="outer-clock-face">
+                  <div class="marking marking-one"></div>
+                  <div class="marking marking-two"></div>
+                  <div class="marking marking-three"></div>
+                  <div class="marking marking-four"></div>
+                  <div class="inner-clock-face">
+                    <div class="hand hour-hand"></div>
+                    <div class="hand min-hand"></div>
+                    <div class="hand second-hand"></div>
+                  </div>
+                </div>
+              </div>
 
 
 
@@ -176,6 +189,7 @@
     <script src="Area.js"></script>
     <script src="Player.js"></script>
     <script src="script.js"></script>
+    <script src="clock.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2"
         crossorigin="anonymous"></script>
