@@ -401,8 +401,8 @@ toolpanelIds.forEach((id) => {
 });
 
 window.onresize = function () {
-  canvas.width = document.documentElement.clientWidth / 2;
-  canvas.height = document.documentElement.clientWidth / 2;
+  canvas.width = document.documentElement.clientHeight / 2;
+  canvas.height = document.documentElement.clientHeight / 2;
 
   camps.forEach((element) => {
     element.resize();
