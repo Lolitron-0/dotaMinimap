@@ -1,5 +1,6 @@
+//mix-in
 class IDrawable {
-    draw() {
+    draw(cx) {
 
     }
 }

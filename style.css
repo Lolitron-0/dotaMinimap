@@ -1,5 +1,6 @@
         .canvas {
             background-color: #eee;
+            cursor: crosshair;
         }
 
         .button-select {
@@ -28,6 +29,11 @@
             background-repeat: round;
         }
 
+        #erasemode {
+            background: url("media/eraser.png");
+            background-repeat: round;
+        }
+
         .tool-button {
             width: 5.5em;
             height: 4.2em;
@@ -40,6 +46,19 @@
 
         .tool-button:hover {
             box-shadow: 0px 0px 15px rgba(255, 255, 255, 0.556);
+        }
+
+        #tip{
+            background-color: #000000af;
+            border: #eee 1px solid;
+            color: #eee;
+            position: absolute;
+            z-index: 2;
+            display: none;
+            width: max-content;
+            height: max-content;
+            text-align: center;
+            padding: 3px;
         }
 
         input[type=range] {
@@ -79,14 +98,41 @@
             appearance: none;
         }
 
-       
-
         input[type=range]::-webkit-slider-thumb {
             -webkit-appearance: none;
-            border: 1px solid #000000;
-            height: 20px;
-            width: 10px;
-            background: #ffffff;
+            height: 25px;
+            width: 25px;
             cursor: pointer;
             margin-top: -8px; 
-          }
+        }
+
+        input[type=range]::-moz-range-thumb {
+            -moz-appearance: none;
+            height: 25px;
+            width: 25px;
+            cursor: pointer;
+        }
+
+        input[type=range].ms-range::-webkit-slider-thumb {
+            background-image: url("media/boot_icon.png");
+            background-repeat: round;
+            background-color: transparent;
+        }
+
+        input[type=range].ms-range::-moz-range-thumb {
+            background-image: url("media/boot_icon.png");
+            background-repeat: round;
+            background-color: transparent;
+        }
+
+        input[type=range].clock-range::-webkit-slider-thumb {
+            background-image: url("media/clock_icon.png");
+            background-repeat: round;
+            background-color: transparent;
+        }
+
+        input[type=range].clock-range::-moz-range-thumb {
+            background-image: url("media/clock_icon.png");
+            background-repeat: round;
+            background-color: transparent;
+        }

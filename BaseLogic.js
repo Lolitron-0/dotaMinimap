@@ -11,4 +11,5 @@ class BaseLogic extends IDrawable {
   onMouseDown(e) {}
 
   onMouseUp(e) {}
+
 }

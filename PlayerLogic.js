@@ -1,5 +1,5 @@
 class PlayerLogic extends BaseLogic {
-    constructor({ cellIndex }) {
+    constructor( cellIndex ) {
         super()
         this.cellIndex = cellIndex
     }

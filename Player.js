@@ -4,17 +4,14 @@ class Player {
   _speedCounter = null;
   _calculationResult = 0;
 
-  constructor({ id, team }) {
+  constructor(id, team) {
     this.row = document.getElementById(id);
     this._index = Number(id.replace("player", ""));
     this._oldStyle = this.row.style.cssText;
-    this._area = new Area({
-      color: this._oldStyle.split(";")[0].split(":")[1],
-      team: team,
-    });
-    this._speedCounter = new SpeedCounter({
-      color: this._oldStyle.split(";")[0].split(":")[1],
-    });
+    this._area = new Area(this._oldStyle.split(";")[0].split(":")[1], team);
+    this._speedCounter = new SpeedCounter(
+      this._oldStyle.split(";")[0].split(":")[1],
+    );
     this.activeLogic = this._area;
   }
 
@@ -51,14 +48,35 @@ class Player {
     return Play;
   }
 
-  draw() {
-    this._area.draw();
-    this._speedCounter.draw();
+  draw(cx) {
+    this._area.draw(cx);
+    this._speedCounter.draw(cx);
   }
 
   proceedCalculation() {
-    this._calculationResult = this.activeLogic.calculate();
-    this.row.children[this.activeLogic.cellIndex].innerHTML =
+    this._calculationResult = this._area.calculate();
+    this.row.children[this._area.cellIndex].innerHTML = this._calculationResult;
+
+    this._calculationResult = this._speedCounter.calculate();
+    this.row.children[this._speedCounter.cellIndex].innerHTML =
       this._calculationResult;
+  }
+
+  proceedEraser(eraser){
+    this._speedCounter.proceedEraser(eraser);
+    this._area.proceedEraser(eraser);
+  }
+
+  onMouseDown(e) {
+    this.activeLogic.onMouseDown(e);
+  }
+
+  onMouseMove(e) {
+    this._area.onMouseMove(e);
+    this._speedCounter.onMouseMove(e);
+  }
+
+  onMouseUp(e) {
+    this.activeLogic.onMouseUp(e);
   }
 }

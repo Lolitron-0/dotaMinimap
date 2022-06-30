@@ -5,41 +5,24 @@ class Warder extends BaseLogic {
   static observerImage = new Image();
   static sentryImage = new Image();
   _wards = [];
+  _mouseWard;
   constructor() {
     super();
     this.type = WardType.OBSERVER;
   }
 
   onMouseMove(e) {
-    const mousePos = new Point({
-      x: e.pageX,
-      y: e.pageY,
-    });
+    const mousePos = new Point(e.offsetX, e.offsetY);
 
-    this._wards.forEach((ward) => {
-      ward.hovered = isPointInsideRect(mousePos, {
-        x: ward.position.x - Warder.observerImage.width / 2,
-        y: ward.position.y - Warder.observerImage.height / 2,
-        w: Warder.observerImage.width,
-        h: Warder.observerImage.height,
-      });
-    });
     if (this.isFocused) {
-      if (this.type == WardType.OBSERVER) this.traceRays(mousePos, true);
-      else this.drawSentry(mousePos);
+      this._mouseWard = this.traceRays(mousePos);
     }
   }
 
   onMouseDown(e) {
-    const pos = new Point({
-      x: e.pageX,
-      y: e.pageY,
-    });
+    const pos = new Point(e.pageX, e.pageY);
 
-    let idxHover = this._wards.findIndex((ward) => ward.hovered);
-    if (idxHover != -1) {
-      this._wards.splice(idxHover, 1);
-    } else if (this.isFocused)
+    if (this.isFocused)
       this._wards.push({
         position: pos,
         icon:
@@ -47,26 +30,21 @@ class Warder extends BaseLogic {
             ? Warder.observerImage
             : Warder.sentryImage,
         rays: this.traceRays(pos, false),
-        hovered: false,
         type: this.type,
       });
   }
 
   //tracing the rays, returns traced arcs
-  traceRays(startPoint, draw = false) {
-    const currentRay = new Segment({
-      start: startPoint,
-      end: new Point({
-        x: startPoint.x - Warder.obsRadius,
-        y: startPoint.y,
-      }),
-    });
+  traceRays(startPoint) {
+    const currentRay = new Segment(
+      startPoint,
+      new Point(startPoint.x - Warder.obsRadius, startPoint.y)
+    );
 
     const rays = [];
     const treesToTrace = this.determineProcessObjects(startPoint);
     if (treesToTrace == null) return [];
 
-    if (draw) cx.beginPath();
     for (let i = 0; i <= 369; i += Warder.grad) {
       let cutted = null;
       for (let i = 0; i < treesToTrace.length; i++) {
@@ -82,24 +60,8 @@ class Warder extends BaseLogic {
 
       if (cutted == null) {
         //if no intersection
-        if (draw)
-          cx.arc(
-            startPoint.x,
-            startPoint.y,
-            currentRay.length,
-            (i + 180) * GRAD_TO_RAD,
-            (i + 180 + Warder.grad) * GRAD_TO_RAD
-          );
         rays.push(currentRay.copy());
       } else {
-        if (draw)
-          cx.arc(
-            startPoint.x,
-            startPoint.y,
-            cutted.length,
-            (i + 180) * GRAD_TO_RAD,
-            (i + 180 + Warder.grad) * GRAD_TO_RAD
-          );
         rays.push(cutted);
       }
 
@@ -108,10 +70,6 @@ class Warder extends BaseLogic {
         currentRay.end,
         Warder.grad
       );
-    }
-    if (draw) {
-      cx.fillStyle = "rgba(255, 255, 0, 0.3)";
-      cx.fill();
     }
 
     return rays;
@@ -141,32 +99,60 @@ class Warder extends BaseLogic {
     return resultObjects;
   }
 
-  draw() {
+  draw(cx) {
     this._wards.forEach((ward) => {
       cx.drawImage(
-        ward.hovered ? DEFAULT_ICONS.CROSS : ward.icon,
+        ward.icon,
         ward.position.x - Warder.observerImage.width / 2,
         ward.position.y - Warder.observerImage.height / 2,
-        40,
-        40
+        ward.icon.width,
+        ward.icon.height
       );
       if (ward.type == WardType.OBSERVER) {
-        cx.beginPath();
-        cx.fillStyle = "rgba(255, 255, 0, 0.3)";
-        for (let i = 0; i < ward.rays.length; i++) {
-          const ray = ward.rays[i];
-          cx.arc(
-            ward.position.x,
-            ward.position.y,
-            ray.length,
-            (i * Warder.grad + 180) * GRAD_TO_RAD,
-            (i * Warder.grad + 180 + Warder.grad) * GRAD_TO_RAD
-          );
-        }
-        cx.fill();
+        this.drawObsRays(ward.rays);
       } else {
         this.drawSentry(ward.position);
       }
     });
+
+    if (this.isFocused) {
+      if (this.type == WardType.OBSERVER) this.drawObsRays(this._mouseWard);
+      else this.drawSentry(this._mouseWard[0].start);
+    }
+  }
+
+  drawObsRays(rays) {
+    cx.beginPath();
+    cx.fillStyle = "rgba(255, 255, 0, 0.3)";
+    for (let i = 0; i < rays.length; i++) {
+      const ray = rays[i];
+      cx.arc(
+        ray.start.x,
+        ray.start.y,
+        ray.length,
+        (i * Warder.grad + 180) * GRAD_TO_RAD,
+        (i * Warder.grad + 180 + Warder.grad) * GRAD_TO_RAD
+      );
+    }
+    cx.fill();
+  }
+
+  proceedEraser(eraser) {
+    for (let i = 0; i < this._wards.length; i++) {
+      const ward = this._wards[i];
+      if (
+        intersectionRectangleCircle(
+          new Rectangle(
+            ward.position,
+            Warder.observerImage.width,
+            Warder.observerImage.height
+          ),
+          eraser.point,
+          eraser.radius
+        )
+      ) {
+        this._wards.splice(i, 1);
+      }
+    }
   }
 }

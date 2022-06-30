@@ -2,8 +2,8 @@ class Area extends PlayerLogic {
   _color = "";
   _curves = [];
 
-  constructor({ color, team }) {
-    super({ cellIndex: 1 });
+  constructor(color, team) {
+    super(1);
     this._color = color;
     this.team = team;
   }
@@ -30,26 +30,19 @@ class Area extends PlayerLogic {
   }
 
   onMouseMove(e) {
-    super.onMouseMove(e);
     if (e.button == MouseButtons.LEFT && this.isFocused) {
-      this.addPoint(
-        new Point({
-          x: e.pageX,
-          y: e.pageY,
-        })
-      );
+      this.addPoint(new Point(e.pageX, e.pageY));
     }
   }
 
   onMouseUp(e) {
-    super.onMouseUp(e);
     this.cleanUpSmall();
-    if (e.button == MouseButtons.RIGHT) {
-      this.delete_curves({
-        x: e.pageX,
-        y: e.pageY,
-      });
-    }
+    //if (e.button == MouseButtons.RIGHT) {
+    //  this.deleteCurves({
+    //    x: e.pageX,
+    //    y: e.pageY,
+    //  });
+    //}
     this.finishAllCurves();
   }
 
@@ -58,10 +51,10 @@ class Area extends PlayerLogic {
     camps.forEach((camp) => {
       if (
         this.isPointInside(
-          new Point({
-            x: camp.position.x + camp.size / 2,
-            y: camp.position.y + camp.size / 2,
-          })
+          new Point(
+            camp.position.x + camp.size / 2,
+            camp.position.y + camp.size / 2
+          )
         ) &&
         camp.checked != this.team &&
         camp.checked != DotaTeam.ALL
@@ -71,23 +64,9 @@ class Area extends PlayerLogic {
         else camp.checked = DotaTeam.ALL;
 
         res += getCampGold(camp);
-        camp.size = Camp.enlargedSize;
       }
     });
     return res;
-  }
-
-  //returns if anything was deleted
-  delete_curves(point) {
-    let deleted = false;
-    for (let i = this._curves.length - 1; i >= 0; i--) {
-      if (this._curves[i].isPointInside(point) && this._curves[i].finished) {
-        this._curves.splice(i, 1);
-        deleted = true;
-        break;
-      }
-    }
-    return deleted;
   }
 
   finishAllCurves() {
@@ -97,7 +76,7 @@ class Area extends PlayerLogic {
   }
 
   startNewCurve() {
-    this._curves.push(new ClosedCurve({ color: this._color }));
+    this._curves.push(new ClosedCurve(this._color));
   }
 
   addPoint(point) {
@@ -108,9 +87,9 @@ class Area extends PlayerLogic {
     });
   }
 
-  draw() {
+  draw(cx) {
     this._curves.forEach((element) => {
-      element.draw();
+      element.draw(cx);
     });
   }
 
@@ -120,5 +99,13 @@ class Area extends PlayerLogic {
       if (element.isPointInside(point)) result = true;
     });
     return result;
+  }
+
+  proceedEraser(eraser) {
+    for (let i = 0; i < this._curves.length; i++) {
+      const curve = this._curves[i];
+      if (curve.shouldProceedEraser(eraser.point, eraser.radius))
+        this._curves.splice(i, 1);
+    }
   }
 }
