@@ -113,6 +113,7 @@
 
         input[type=range]::-moz-range-thumb {
             -moz-appearance: none;
+	    border: none;
             height: 25px;
             width: 25px;
             cursor: pointer;

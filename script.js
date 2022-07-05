@@ -178,7 +178,7 @@ function refreshPlayerCanvas() {
 
 function loadTrees() {
 	trees = [];
-	loadJSON(function (response) {
+		loadJSON(function (response) {
 		data = JSON.parse(response);
 		data.forEach((group) => {
 			group.trees.forEach((curve) => {
@@ -196,7 +196,7 @@ function loadTrees() {
 			});
 		});
 		refreshMain(null);
-	}, "collision.json");
+	}, "./collision.json")
 }
 
 //====================================================================
