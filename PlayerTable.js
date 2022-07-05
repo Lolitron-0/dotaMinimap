@@ -1,208 +1,314 @@
-class PlayerTable extends IDrawable {
-  static scale = 1.14;
-  constructor(onload = () => {}) {
-    //setting up initial positions and boundaries
-    super();
-    this.cells = [];
-    const opaqueWidth = 80 * PlayerTable.scale;
-    const defaultWidth = 88 * PlayerTable.scale;
-    const defaultHeight = 56 * PlayerTable.scale;
-    const radiantBoundary = new Parallelogramm([
-      new Point(0, 0),
-      new Point(opaqueWidth, 0),
-      new Point(defaultWidth, defaultHeight),
-      new Point(defaultWidth - opaqueWidth, defaultHeight),
-    ]);
-    for (let i = 0; i < 5; i++) {
-      const newCell = new PlayerCell(
-        PlayerTable.scale,
-        "media/player" + (i + 1) + ".png",
-        radiantBoundary,
-        new Point(radiantBoundary.topSideLength * i, 0)
-      );
-      this.cells.push(newCell);
-    }
+class PlayerTable extends EventTarget {
+	static tableScale = 1.14;
+	constructor(onload = () => {}) {
+		//setting up initial positions and boundaries
+		super();
+		this.cells = [];
+		//#region cells init
+		const opaqueWidth = 80 * PlayerTable.tableScale;
+		const defaultWidth = 88 * PlayerTable.tableScale;
+		const defaultHeight = 56 * PlayerTable.tableScale;
+		const radiantBoundary = new Parallelogramm([
+			new Point(0, 0),
+			new Point(opaqueWidth, 0),
+			new Point(defaultWidth, defaultHeight),
+			new Point(defaultWidth - opaqueWidth, defaultHeight),
+		]);
+		for (let i = 0; i < 5; i++) {
+			const newCell = new PlayerCell(
+				"media/player" + (i + 1) + ".png",
+				radiantBoundary,
+				new Point(radiantBoundary.topSideLength * i, 0)
+			);
+			this.cells.push(newCell);
+		}
 
-    this.timer = new DotaTimer(
-      this.cells[this.cells.length - 1].position.withAddedX(
-        this.cells[this.cells.length - 1].opaqueWidth
-      ),
-      PlayerTable.scale
-    );
+		this.timer = new DotaTimer(
+			this.cells[this.cells.length - 1].position.withAddedX(
+				this.cells[this.cells.length - 1].opaqueWidth
+			),
+			PlayerTable.tableScale
+		);
 
-    this.timer.setOnload(() => {
-      const direBoundary = new Parallelogramm([
-        new Point(defaultWidth - opaqueWidth, 0),
-        new Point(defaultWidth, 0),
-        new Point(opaqueWidth, defaultHeight),
-        new Point(0, defaultHeight),
-      ]);
-      for (let i = 5; i < 10; i++) {
-        const newCell = new PlayerCell(
-          PlayerTable.scale,
-          "media/player" + (i + 1) + ".png",
-          direBoundary,
-          new Point(
-            this.timer.position.x +
-              this.timer.width -
-              (defaultWidth - opaqueWidth) +
-              direBoundary.topSideLength * (i - 5),
-            0
-          )
-        );
-        this.cells.push(newCell);
-      }
-      this.cells[this.cells.length - 1].setOnload(onload);
-    });
-  }
+		this.timer.setOnload(() => {
+			const direBoundary = new Parallelogramm([
+				new Point(defaultWidth - opaqueWidth, 0),
+				new Point(defaultWidth, 0),
+				new Point(opaqueWidth, defaultHeight),
+				new Point(0, defaultHeight),
+			]);
+			for (let i = 5; i < 10; i++) {
+				const newCell = new PlayerCell(
+					"media/player" + (i + 1) + ".png",
+					direBoundary,
+					new Point(
+						this.timer.position.x +
+							this.timer.width -
+							(defaultWidth - opaqueWidth) +
+							direBoundary.topSideLength * (i - 5),
+						0
+					)
+				);
+				this.cells.push(newCell);
+			}
+			this.cells[this.cells.length - 1].setOnload(onload);
+		});
+		//#endregion
+		this.selectionChangedEvent = new Event("selectionchanged");
+		this.checkedIndex = 0;
+		this.setCheckedPlayerIndex(0);
+		this.onselectionchanged = () => {};
+		this.addEventListener("selectionchanged", () => {
+			this.onselectionchanged();
+		});
+	}
 
-  onMouseMove(e) {
-    this.cells[1].localParallelogramm.withMovedPoints(this.cells[3].position);
-    this.cells.forEach((cell) => {
-      if (cell.isPointInside(new Point(e.offsetX, e.offsetY))) {
-        cell.positionPair.setSecond();
-      }
-      else
-      cell.positionPair.setFirst()
-    });
-  }
+	setCheckedPlayerIndex(i) {
+		if (i < 0 || i > this.cells.length - 1) return;
 
-  draw(cx) {
-    this.timer.draw(cx);
-    this.cells.forEach((cell) => {
-      cell.draw(cx);
-    });
-  }
+		this.checkedIndex = i;
+		this.cells.forEach((cell) => {
+			cell.setPositionIndex(PlayerCell.normalPaletteIndex);
+			cell.checked = false;
+		});
+		this.cells[i].setPositionIndex(PlayerCell.checkedPaletteIndex);
+		this.cells[i].checked = true;
+		this.dispatchEvent(this.selectionChangedEvent);
+	}
+
+	uncheckAll() {
+		this.cells.forEach((cell) => {});
+	}
+
+	onMouseDown(e) {
+		this.setCheckedPlayerIndex(
+			this.cells.findIndex((cell) =>
+				cell.isPointInside(new Point(e.offsetX, e.offsetY))
+			)
+		);
+	}
+
+	onMouseMove(e) {
+		this.cells
+			.filter((cell) => !cell.checked)
+			.forEach((cell) => {
+				cell.onMouseMove(e);
+			});
+	}
+
+	draw(cx) {
+		this.timer.draw(cx);
+		this.cells.forEach((cell) => {
+			cell.draw(cx);
+		});
+	}
 }
 
 class PlayerCell {
-  //bounding curve in local coords
-  constructor(scale, imageSource, parallelogrammBounds, position) {
-    this.cellImage = new Image();
-    this.cellImage.src = imageSource;
-    this.localParallelogramm = parallelogrammBounds;
-    this.positionPair = new DoubleValue(
-      position,
-      position
-        .withAddedY(this.imageHeight / 6)
-        .withAddedX(this.localParallelogramm.tilt*-1*(this.imageWidth - this.opaqueWidth) / 6)
-    );
-    this.scale = scale;
-    this.gold = 0;
-    this.time = 0;
-    this.checked = false;
-    this.updateBoundingCurve();
-  }
+	static normalPaletteIndex = 0;
+	static hoveredPaletteIndex = 1;
+	static checkedPaletteIndex = 2;
 
-  setOnload(onload) {
-    this.cellImage.onload = onload;
-  }
+	constructor(imageSource, parallelogrammBounds, position) {
+		this.cellImage = new Image();
+		this.cellImage.src = imageSource;
+		this.localParallelogramm = parallelogrammBounds;
+		this._positionPalette = new ItemPalette(
+			this._getPositionsArray(position)
+		);
+		const goldIcon = new Image();
+		goldIcon.src = "media/gold.png";
+		this.gold = new TextLine("0", 16, goldIcon);
+		const stopWatchIcon = new Image();
+		stopWatchIcon.src = "media/stopwatch.png";
+		this.time = new TextLine("0 sec", 16, stopWatchIcon);
+		this._updateTextPosition();
+		this.checked = false;
+	}
 
-  isPointInside(point) {
-    let actualBounds = this.localParallelogramm.withMovedPoints(this.position);
-    let raySegment = new Segment(point, point.withAddedX(-10000));
-    let res = false;
-    if (intersection2D(raySegment, actualBounds.leftSide)) res = !res;
-    if (intersection2D(raySegment, actualBounds.rightSide)) res = !res;
-    return res;
-  }
+	_getPositionsArray(position) {
+		return [
+			position,
+			position
+				.withAddedY(this.imageHeight / 6)
+				.withAddedX(
+					(this.localParallelogramm.tilt *
+						-1 *
+						(this.imageWidth - this.opaqueWidth)) /
+						6
+				),
+			position
+				.withAddedY(this.imageHeight / 3)
+				.withAddedX(
+					(this.localParallelogramm.tilt *
+						-1 *
+						(this.imageWidth - this.opaqueWidth)) /
+						3
+				),
+		];
+	}
 
-  setPosition(pos) {
-    this.position = new DoubleValue(
-      pos,
-      pos
-        .withAddedY(this.imageHeight / 3)
-        .withAddedX((this.imageWidth - this.opaqueWidth) / 3)
-    );
-    this.updateBoundingCurve();
-  }
+	_updateTextPosition() {
+		this.gold.setPosition(
+			this.position
+				.withAddedY(this.imageHeight / 4)
+				.withAddedX(this.localParallelogramm.rect.width / 5)
+		);
+		this.time.setPosition(
+			this.position
+				.withAddedY((2 * this.imageHeight) / 4)
+				.withAddedX(this.localParallelogramm.rect.width / 5)
+		);
+	}
 
-  updateBoundingCurve() {}
+	onMouseMove(e) {
+		if (this.checked) return;
+		if (this.isPointInside(new Point(e.offsetX, e.offsetY))) {
+			this.setPositionIndex(PlayerCell.hoveredPaletteIndex);
+		} else this.setPositionIndex(PlayerCell.normalPaletteIndex);
+	}
 
-  draw(cx) {
-    cx.drawImage(
-      this.cellImage,
-      this.position.x,
-      this.position.y,
-      this.localParallelogramm.rect.width,
-      this.localParallelogramm.rect.height
-    );
-  }
+	setOnload(onload) {
+		this.cellImage.onload = onload;
+	}
 
-  get position() {
-    return this.positionPair.current;
-  }
+	isPointInside(point) {
+		let actualBounds = this.localParallelogramm.withMovedPoints(
+			this.position
+		);
+		let raySegment = new Segment(point, point.withAddedX(-10000));
+		let res = false;
+		if (intersection2D(raySegment, actualBounds.leftSide)) res = !res;
+		if (intersection2D(raySegment, actualBounds.rightSide)) res = !res;
+		return res;
+	}
 
-  get imageWidth() {
-    return this.localParallelogramm.rect.width;
-  }
+	setPositionIndex(i) {
+		this._positionPalette.setCurrentIndex(i);
+		this._updateTextPosition();
+	}
 
-  get imageHeight() {
-    return this.localParallelogramm.rect.height;
-  }
+	setPosition(pos) {
+		this._positionPalette.setNewItems(this._getPositionsArray(pos));
+		this._updateTextPosition();
+	}
 
-  get opaqueWidth() {
-    return this.localParallelogramm.topSideLength;
-  }
+	draw(cx) {
+		cx.drawImage(
+			this.cellImage,
+			this.position.x,
+			this.position.y,
+			this.localParallelogramm.rect.width,
+			this.localParallelogramm.rect.height
+		);
+		this.gold.draw(cx);
+		this.time.draw(cx);
+	}
+
+	get position() {
+		return this._positionPalette.current;
+	}
+
+	get imageWidth() {
+		return this.localParallelogramm.rect.width;
+	}
+
+	get imageHeight() {
+		return this.localParallelogramm.rect.height;
+	}
+
+	get opaqueWidth() {
+		return this.localParallelogramm.topSideLength;
+	}
+}
+
+class TextLine extends IDrawable {
+	constructor(text, fontSize, icon = new Image()) {
+		super();
+		this.text = text;
+		this.position = new Point(0, 0);
+		this.icon = icon;
+		this.fontSize = fontSize;
+	}
+
+	setPosition(position) {
+		this.position = position;
+	}
+
+	setText(text) {
+		this.text = text;
+	}
+
+	draw(cx) {
+		cx.drawImage(this.icon, this.position.x, this.position.y);
+		cx.font = this.fontSize + "px calibri";
+		cx.strokeStyle = "white";
+		cx.lineWidth = 1;
+		cx.strokeText(
+			this.text,
+			this.position.x + this.icon.width * 1.3,
+			this.position.y + (7 * this.icon.height) / 8
+		);
+	}
 }
 
 class DotaTimer extends IDrawable {
-  constructor(position, scale) {
-    super();
-    this.dayImage = new Image();
-    this.dayImage.src = "media/day_timer.png";
-    this.nightImage = new Image();
-    this.nightImage.src = "media/night_timer.png";
-    this.minutes = 30;
-    this.position = position;
-    this.scale = scale;
-  }
+	constructor(position, scale) {
+		super();
+		this.dayImage = new Image();
+		this.dayImage.src = "media/day_timer.png";
+		this.nightImage = new Image();
+		this.nightImage.src = "media/night_timer.png";
+		this._minutes = 30;
+		this.position = position;
+		this.scale = scale;
+	}
 
-  setMinutes(minutes) {
-    this.minutes = minutes;
-  }
+	setMinutes(minutes) {
+		this._minutes = minutes;
+	}
 
-  setPosition(position) {
-    this.position = position;
-  }
+	setPosition(position) {
+		this.position = position;
+	}
 
-  setOnload(onload) {
-    this.nightImage.onload = onload;
-  }
+	setOnload(onload) {
+		this.nightImage.onload = onload;
+	}
 
-  draw(cx) {
-    if (Math.floor(this.minutes / 5) % 2 == 0)
-      cx.drawImage(
-        this.dayImage,
-        this.position.x,
-        this.position.y,
-        this.dayImage.width * this.scale,
-        this.dayImage.height * this.scale
-      );
-    else
-      cx.drawImage(
-        this.nightImage,
-        this.position.x,
-        this.position.y,
-        this.nightImage.width * this.scale,
-        this.nightImage.height * this.scale
-      );
+	draw(cx) {
+		if (Math.floor(this._minutes / 5) % 2 == 0)
+			cx.drawImage(
+				this.dayImage,
+				this.position.x,
+				this.position.y,
+				this.dayImage.width * this.scale,
+				this.dayImage.height * this.scale
+			);
+		else
+			cx.drawImage(
+				this.nightImage,
+				this.position.x,
+				this.position.y,
+				this.nightImage.width * this.scale,
+				this.nightImage.height * this.scale
+			);
 
-    cx.font = "16px serif";
-    cx.strokeStyle = "white";
-    cx.lineWidth = 1;
-    cx.strokeText(
-      this.minutes + ":00",
-      this.position + this.dayImage.width / 2,
-      this.position.y + this.dayImage.height / 2
-    );
-  }
+		cx.font = "16px calibri";
+		cx.strokeStyle = "white";
+		cx.lineWidth = 1;
+		cx.strokeText(
+			this._minutes + ":00",
+			this.position.x + this.dayImage.width / 2,
+			this.position.y + this.dayImage.height * 0.95
+		);
+	}
 
-  get width() {
-    return this.dayImage.width * this.scale;
-  }
+	get width() {
+		return this.dayImage.width * this.scale;
+	}
 
-  get height() {
-    return this.dayImage.height * this.scale;
-  }
+	get height() {
+		return this.dayImage.height * this.scale;
+	}
 }

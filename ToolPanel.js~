@@ -1,0 +1,17 @@
+class ToolPanel {
+	constructor(buttonIds) {
+		this.buttons = []
+		buttonIds.forEach((id)=>{
+			buttons.push(new ToolButton(document.getElementById(id)))
+
+		}
+	}
+}
+
+class ToolButton {
+	static checkedStyle = "trandform: scale(0.8);";
+	constructor(id) {
+		this.element = document.getElementById(id);
+		this.checked = false;
+	}
+}

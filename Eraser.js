@@ -26,8 +26,6 @@ class Eraser extends BaseLogic {
   onMouseUp(e) {
     if (!this.isFocused) return;
     this.erasing = false;
-    this.point.x = -1;
-    this.point.y = -1;
   }
 
   draw(cx) {

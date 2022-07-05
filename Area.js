@@ -3,7 +3,7 @@ class Area extends PlayerLogic {
   _curves = [];
 
   constructor(color, team) {
-    super(1);
+    super();
     this._color = color;
     this.team = team;
   }
@@ -66,7 +66,7 @@ class Area extends PlayerLogic {
         res += getCampGold(camp);
       }
     });
-    return res;
+    this.calculationResult = res;
   }
 
   finishAllCurves() {

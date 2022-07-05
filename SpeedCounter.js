@@ -2,16 +2,16 @@ class SpeedCounter extends PlayerLogic {
   static deleteDistance = 20;
 
   constructor(color) {
-    super(2);
+    super();
     this.curve = new Curve(color);
     this.ms = 300;
   }
 
   draw(cx) {
     if (this.curve.isEmpty()) return;
-    cx.setLineDash([10])
+    cx.setLineDash([10]);
     this.curve.draw(cx);
-    cx.setLineDash([])
+    cx.setLineDash([]);
   }
 
   onMouseDown(e) {
@@ -48,6 +48,7 @@ class SpeedCounter extends PlayerLogic {
   }
 
   calculate() {
-    return Math.round((this.curve.length * PX_TO_UNIT) / this.ms) + " sec";
+    this.calculationResult =
+      Math.round((this.curve.length * PX_TO_UNIT) / this.ms) + " sec";
   }
 }

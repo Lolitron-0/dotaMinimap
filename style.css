@@ -1,3 +1,7 @@
+        html {
+            user-select: none;
+        }
+
         .canvas {
             background-color: #eee;
             cursor: crosshair;
@@ -34,13 +38,14 @@
             background-repeat: round;
         }
 
+        /*TODO tabs with tips */
         .tool-button {
+            display: inline-block;
             width: 5.5em;
             height: 4.2em;
             border: none;
             border-radius: 10%;
             transition: all 350ms ease;
-            display: block;
             margin: 5px;
         }
 
@@ -48,7 +53,7 @@
             box-shadow: 0px 0px 15px rgba(255, 255, 255, 0.556);
         }
 
-        #tip{
+        #tip {
             background-color: #000000af;
             border: #eee 1px solid;
             color: #eee;
@@ -103,7 +108,7 @@
             height: 25px;
             width: 25px;
             cursor: pointer;
-            margin-top: -8px; 
+            margin-top: -8px;
         }
 
         input[type=range]::-moz-range-thumb {

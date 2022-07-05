@@ -1,82 +1,68 @@
 class Player {
-  _oldStyle = "";
-  _area = null;
-  _speedCounter = null;
-  _calculationResult = 0;
+	_area = null;
+	_speedCounter = null;
 
-  constructor(id, team) {
-    this.row = document.getElementById(id);
-    this._index = Number(id.replace("player", ""));
-    this._oldStyle = this.row.style.cssText;
-    this._area = new Area(this._oldStyle.split(";")[0].split(":")[1], team);
-    this._speedCounter = new SpeedCounter(
-      this._oldStyle.split(";")[0].split(":")[1],
-    );
-    this.activeLogic = this._area;
-  }
+	constructor(team, color, index) {
+		this._area = new Area(color, team);
+		this._speedCounter = new SpeedCounter(color);
+		this.activeLogic = this._area;
+		this.index = index
+	}
 
-  setSelected(value) {
-    if (value) {
-      this.row.style = SELECTED_ROW_STYLE;
-    } else this.row.style.cssText = this._oldStyle;
+	setMoveSpeed(ms) {
+		this._speedCounter.ms = Number(ms);
+		this.proceedCalculation();
+	}
 
-    document.getElementById("range" + this._index).style.display = value
-      ? "initial"
-      : "none";
+	switchTo(mode) {
+		this.activeLogic.isFocused = true;
+		switch (mode) {
+			case PlayerInteractionMode.AREAS:
+				this.activeLogic = this._area;
+				break;
+			case PlayerInteractionMode.MS:
+				this.activeLogic = this._speedCounter;
+				break;
+			case PlayerInteractionMode.NONE:
+				this.activeLogic.isFocused = false;
+				break;
+			default:
+				break;
+		}
+	}
 
-    this.activeLogic.isFocused = value;
-  }
+	draw(cx) {
+		this._area.draw(cx);
+		this._speedCounter.draw(cx);
+	}
 
-  setSpeedCounterMs(ms) {
-    this._speedCounter.ms = Number(ms);
-  }
+	proceedCalculation() {
+		this._area.calculate();
+		this._speedCounter.calculate();
+	}
 
-  switchTo(mode) {
-    switch (mode) {
-      case PlayerInteractionMode.AREAS:
-        this.activeLogic = this._area;
-        break;
-      case PlayerInteractionMode.MS:
-        this.activeLogic = this._speedCounter;
-        break;
-      default:
-        break;
-    }
-  }
+	proceedEraser(eraser) {
+		this._speedCounter.proceedEraser(eraser);
+		this._area.proceedEraser(eraser);
+	}
 
-  getMode() {
-    return Play;
-  }
+	onMouseDown(e) {
+		this.activeLogic.onMouseDown(e);
+	}
 
-  draw(cx) {
-    this._area.draw(cx);
-    this._speedCounter.draw(cx);
-  }
+	onMouseMove(e) {
+		this._area.onMouseMove(e);
+		this._speedCounter.onMouseMove(e);
+	}
 
-  proceedCalculation() {
-    this._calculationResult = this._area.calculate();
-    this.row.children[this._area.cellIndex].innerHTML = this._calculationResult;
+	onMouseUp(e) {
+		this.activeLogic.onMouseUp(e);
+	}
 
-    this._calculationResult = this._speedCounter.calculate();
-    this.row.children[this._speedCounter.cellIndex].innerHTML =
-      this._calculationResult;
-  }
-
-  proceedEraser(eraser){
-    this._speedCounter.proceedEraser(eraser);
-    this._area.proceedEraser(eraser);
-  }
-
-  onMouseDown(e) {
-    this.activeLogic.onMouseDown(e);
-  }
-
-  onMouseMove(e) {
-    this._area.onMouseMove(e);
-    this._speedCounter.onMouseMove(e);
-  }
-
-  onMouseUp(e) {
-    this.activeLogic.onMouseUp(e);
-  }
+	get gold(){
+		return this._area.calculationResult
+	}
+	get travelTime(){
+		return this._speedCounter.calculationResult
+	}
 }
