@@ -7,38 +7,47 @@ class ToolPanel extends EventTarget{
 		
 		const buttonIds = ["areamode","speedmode","wardmode","erasemode"]
 		buttonIds.forEach((id)=>{
-			const newButton = new ToolButton(document.getElementById(id))
+			const newButton;
+			newButton = new ToolButton(document.getElementById(id));
 			
 			newButton.addOnClick(()=>{ 
 				this.buttons.forEach((button)=>{
 					setChecked(false) // TODO
 				})
-			}, true)
+			}, true) //first of all uncheck others
 			buttons.push(newButton)
 		}
+	}
+
+	//returns a ToolButton (or proper inheritor) object with added onClick callback
+	_getButonById(id){
+					switch(id){
+
+					}
 	}
 }
 
 class ToolButton extends EventTarget{
 	static checkedStyle = "scale(0.8)";
 	static uncheckedStyle = "scale(1)";
+				
 	constructor(id) {
 		this.element = document.getElementById(id);
 		this._checked = false;
-		this.onClickPoll = []
+		this._onClickPoll = []
 		this.addOnClick(()=>{
 			this.setChecked(true);
 		})
 		this.element.onclick = ()=>{
-			this.onClickPoll.forEach((callback)=>{
+			this._onClickPoll.forEach((callback)=>{
 				callback();
 			})
 		}
 	}
 
 	addOnClick(callback, toFront = false){
-		if(toFront) this.onClickPoll.unshift(callback)
-		else this.onClickPoll.push(callback);
+		if(toFront) this._onClickPoll.unshift(callback)
+		else this._onClickPoll.push(callback);
 	}
 
 	setChecked(value){
