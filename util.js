@@ -275,10 +275,17 @@ class DotaTeam {
 	static ALL = 3;
 }
 
-class PlayerInteractionMode {
+class InteractionMode {
 	static NONE = -1;
 	static AREAS = 0;
 	static MS = 1;
+	static WARDS = 2;
+	static ERASE = 3;
+}
+
+function isPlayerMode(intMode){
+	return intMode == InteractionMode.AREAS ||
+	intMode == InteractionMode.MS
 }
 
 class GroundLevel {
@@ -528,4 +535,32 @@ function getImageData(image, w, h) {
 
 function getLocalMouseEventCoords(parent, e) {
 	return new Point(e.pageX - parent.clientLeft);
+}
+
+function convertToolButtonIdToInteractionMode(id) {
+	switch (id) {
+		case "wardmode":
+			return InteractionMode.WARDS;
+		case "erasemode":
+			return InteractionMode.ERASE;
+		case "areamode":
+			return InteractionMode.AREAS;
+		case "speedmode":
+			return InteractionMode.MS;
+		default:
+			return InteractionMode.NONE;
+	}
+}
+
+function convertInteractionModeToToolButtonId(id) {
+	switch (id) {
+		case InteractionMode.WARDS:
+			return "wardmode";
+		case InteractionMode.ERASE:
+			return "erasemode";
+		case InteractionMode.AREAS:
+			return "areamode";
+		case InteractionMode.MS:
+			return "speedmode";
+	}
 }

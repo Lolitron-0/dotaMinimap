@@ -5,6 +5,7 @@ class SpeedCounter extends PlayerLogic {
     super();
     this.curve = new Curve(color);
     this.ms = 300;
+    this.calculationResult = "0 sec"
   }
 
   draw(cx) {

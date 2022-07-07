@@ -1,410 +1,252 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Pisi</title>
-    <link rel="stylesheet" href="style.css" />
-    <link rel="stylesheet" href="clock.css" />
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-      integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor"
-      crossorigin="anonymous"
-    />
-  </head>
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Pisi</title>
+		<link rel="stylesheet" href="style.css" />
+		<link rel="stylesheet" href="clock.css" />
+		<link
+			href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css"
+			rel="stylesheet"
+			integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor"
+			crossorigin="anonymous"
+		/>
+	</head>
 
-  <body style="background-color: RGB(5, 26, 34); overflow: hidden">
-    <div class="row">
-      <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
-        <canvas
-          class="canvas"
-          id="canvas"
-          oncontextmenu="return false;"
-        ></canvas>
-      </div>
-      <div class="col">
-        <div style="width: 99%">
-          <canvas id="playerCanvas"></canvas>
-        </div>
-        <div style="display: block">
-          <div class="bd-example" style="width: 500px">
-            <table class="table table-hover" style="color: white">
-              <thead>
-                <tr>
-                  <th scope="col" style="text-align: center">Player</th>
-                  <th scope="col" style="text-align: center">
-                    <img src="media/gold.png" />
-                  </th>
-                  <th scope="col" style="text-align: center">
-                    <img src="media/stopwatch.png" />
-                  </th>
-                </tr>
-              </thead>
+	<body style="background-color: RGB(5, 26, 34); overflow: hidden">
+		<div class="row">
+			<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+				<canvas
+					class="canvas"
+					id="canvas"
+					oncontextmenu="return false;"
+				></canvas>
+			</div>
+			<div class="col">
+				<div style="width: 99%">
+					<canvas id="playerCanvas"></canvas>
+				</div>
+				<div style="display: block">
+					<input
+						type="range"
+						class="clock-range"
+						style="width: 100%"
+						value="30"
+						min="10"
+						max="60"
+						step="1"
+            orient="vertical"
+						id="timeSlider"
+					/>
+					<br />
 
-              <tbody id="tableBody">
-                <tr
-                  class="table-primary"
-                  id="player1"
-                  style="
-                    --bs-table-color: #3074f9;
-                    --bs-table-bg: black;
-                    --bs-table-hover-bg: #1f1f1f;
-                    --bs-table-hover-color: #3074f9;
-                    border-left: 3px green solid;
-                  "
-                >
-                  <th scope="row" style="text-align: center">Blue</th>
-                  <td style="text-align: center; width: 200px">0</td>
-                  <td style="text-align: center; width: 200px">0 sec</td>
-                </tr>
-                <tr
-                  class="table-primary"
-                  id="player2"
-                  style="
-                    --bs-table-color: #66ffc0;
-                    --bs-table-bg: black;
-                    --bs-table-hover-bg: #1f1f1f;
-                    --bs-table-hover-color: #66ffc0;
-                    border-left: 3px green solid;
-                  "
-                >
-                  <th style="text-align: center" scope="row">Teal</th>
-                  <td style="text-align: center">0</td>
-                  <td style="text-align: center">0 sec</td>
-                </tr>
-                <tr
-                  class="table-primary"
-                  id="player3"
-                  style="
-                    --bs-table-color: #bd00b7;
-                    --bs-table-bg: black;
-                    --bs-table-hover-bg: #1f1f1f;
-                    --bs-table-hover-color: #bd00b7;
-                    border-left: 3px green solid;
-                  "
-                >
-                  <th style="text-align: center" scope="row">Purple</th>
-                  <td style="text-align: center">0</td>
-                  <td style="text-align: center">0 sec</td>
-                </tr>
-                <tr
-                  class="table-primary"
-                  id="player4"
-                  style="
-                    --bs-table-color: #f8f50a;
-                    --bs-table-bg: black;
-                    --bs-table-hover-bg: #1f1f1f;
-                    --bs-table-hover-color: #f8f50a;
-                    border-left: 3px green solid;
-                  "
-                >
-                  <th style="text-align: center" scope="row">Yellow</th>
-                  <td style="text-align: center">0</td>
-                  <td style="text-align: center">0 sec</td>
-                </tr>
-                <tr
-                  class="table-primary"
-                  id="player5"
-                  style="
-                    --bs-table-color: #ff6901;
-                    --bs-table-bg: black;
-                    --bs-table-hover-bg: #1f1f1f;
-                    --bs-table-hover-color: #ff6901;
-                    border-left: 3px green solid;
-                  "
-                >
-                  <th style="text-align: center" scope="row">Orange</th>
-                  <td style="text-align: center">0</td>
-                  <td style="text-align: center">0 sec</td>
-                </tr>
-                <tr
-                  class="table-primary"
-                  id="player6"
-                  style="
-                    --bs-table-color: #ff88c5;
-                    --bs-table-bg: black;
-                    --bs-table-hover-bg: #1f1f1f;
-                    --bs-table-hover-color: #ff88c5;
-                    border-left: 3px red solid;
-                  "
-                >
-                  <th style="text-align: center" scope="row">Pink</th>
-                  <td style="text-align: center">0</td>
-                  <td style="text-align: center">0 sec</td>
-                </tr>
-                <tr
-                  class="table-primary"
-                  id="player7"
-                  style="
-                    --bs-table-color: #a2b349;
-                    --bs-table-bg: black;
-                    --bs-table-hover-bg: #1f1f1f;
-                    --bs-table-hover-color: #a2b349;
-                    border-left: 3px red solid;
-                  "
-                >
-                  <th style="text-align: center" scope="row">Olive</th>
-                  <td style="text-align: center">0</td>
-                  <td style="text-align: center">0 sec</td>
-                </tr>
-                <tr
-                  class="table-primary"
-                  id="player8"
-                  style="
-                    --bs-table-color: #63dafa;
-                    --bs-table-bg: black;
-                    --bs-table-hover-bg: #1f1f1f;
-                    --bs-table-hover-color: #63dafa;
-                    border-left: 3px red solid;
-                  "
-                >
-                  <th style="text-align: center" scope="row">Sky</th>
-                  <td style="text-align: center">0</td>
-                  <td style="text-align: center">0 sec</td>
-                </tr>
-                <tr
-                  class="table-primary"
-                  id="player9"
-                  style="
-                    --bs-table-color: #01831f;
-                    --bs-table-bg: black;
-                    --bs-table-hover-bg: #1f1f1f;
-                    --bs-table-hover-color: #01831f;
-                    border-left: 3px red solid;
-                  "
-                >
-                  <th style="text-align: center" scope="row">Green</th>
-                  <td style="text-align: center">0</td>
-                  <td style="text-align: center">0 sec</td>
-                </tr>
-                <tr
-                  class="table-primary"
-                  id="player10"
-                  style="
-                    --bs-table-color: #9f6b00;
-                    --bs-table-bg: black;
-                    --bs-table-hover-bg: #1f1f1f;
-                    --bs-table-hover-color: #9f6b00;
-                    border-left: 3px red solid;
-                  "
-                >
-                  <th style="text-align: center" scope="row">Brown</th>
-                  <td style="text-align: center">0</td>
-                  <td style="text-align: center">0 sec</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          <input
-            type="range"
-            class="clock-range"
-            style="width: 100%"
-            value="30"
-            min="10"
-            max="60"
-            step="1"
-            id="timeSlider"
-          />
-          <br />
+					<div
+						style="
+							border-radius: 5px;
+							width: max-content;
+							padding: 2px;
+							background-color: rgba(255, 255, 255, 0.205);
+						"
+					>
+						<button
+							class="tool-button"
+							id="areamode"
+							text="GPM area"
+						></button>
+						<button
+							class="tool-button"
+							id="speedmode"
+							text="Travel time"
+						></button>
+						<button
+							class="tool-button"
+							id="wardmode"
+							state="obs"
+							text="Wards"
+							style="background: url(media/observer_wards.png)"
+						></button>
+						<button
+							class="tool-button"
+							id="erasemode"
+							text="Eraser"
+						></button>
+					</div>
+				</div>
 
-          <div style="border-radius: 5px;
-          width: max-content;
-          padding: 2px;
-          background-color: rgba(255, 255, 255, 0.205);"
-          >
-            <button
-              class="tool-button"
-              id="areamode"
-              style="transform: scale(0.8)"
-              text="GPM area"
-            ></button>
-            <button
-              class="tool-button"
-              id="speedmode"
-              text="Travel time"
-            ></button>
-            <button
-              class="tool-button"
-              id="wardmode"
-              state="obs"
-              text="Wards"
-            ></button>
-            <button class="tool-button" id="erasemode" text="Eraser"></button>
-          </div>
-        </div>
+				<div style="display: block">
+					<div id="range1div" style="position: fixed">
+						<a id="range1a" style="color: white">300ms</a>
+						<input
+							type="range"
+							class="ms-range"
+							id="range1"
+							value="300"
+							min="100"
+							max="550"
+							step="5"
+						/>
+					</div>
 
-        <div style="display: block">
-          <div id="range1div" style="position: fixed">
-            <a id="range1a" style="color: white">300ms</a>
-            <input
-              type="range"
-              class="ms-range"
-              id="range1"
-              value="300"
-              min="100"
-              max="550"
-              step="5"
-            />
-          </div>
+					<div id="range2div" style="position: fixed">
+						<a id="range2a" style="color: white">300ms</a>
+						<input
+							type="range"
+							class="ms-range"
+							id="range2"
+							value="300"
+							min="100"
+							max="550"
+							step="5"
+						/>
+					</div>
 
-          <div id="range2div" style="position: fixed">
-            <a id="range2a" style="color: white">300ms</a>
-            <input
-              type="range"
-              class="ms-range"
-              id="range2"
-              value="300"
-              min="100"
-              max="550"
-              step="5"
-            />
-          </div>
+					<div id="range3div" style="position: fixed">
+						<a id="range3a" style="color: white">300ms</a>
+						<input
+							type="range"
+							class="ms-range"
+							id="range3"
+							value="300"
+							min="100"
+							max="550"
+							step="5"
+						/>
+					</div>
 
-          <div id="range3div" style="position: fixed">
-            <a id="range3a" style="color: white">300ms</a>
-            <input
-              type="range"
-              class="ms-range"
-              id="range3"
-              value="300"
-              min="100"
-              max="550"
-              step="5"
-            />
-          </div>
+					<div id="range4div" style="position: fixed">
+						<a id="range4a" style="color: white">300ms</a>
+						<input
+							type="range"
+							class="ms-range"
+							id="range4"
+							value="300"
+							min="100"
+							max="550"
+							step="5"
+						/>
+					</div>
 
-          <div id="range4div" style="position: fixed">
-            <a id="range4a" style="color: white">300ms</a>
-            <input
-              type="range"
-              class="ms-range"
-              id="range4"
-              value="300"
-              min="100"
-              max="550"
-              step="5"
-            />
-          </div>
+					<div id="range5div" style="position: fixed">
+						<a id="range5a" style="color: white">300ms</a>
+						<input
+							type="range"
+							class="ms-range"
+							id="range5"
+							value="300"
+							min="100"
+							max="550"
+							step="5"
+						/>
+					</div>
 
-          <div id="range5div" style="position: fixed">
-            <a id="range5a" style="color: white">300ms</a>
-            <input
-              type="range"
-              class="ms-range"
-              id="range5"
-              value="300"
-              min="100"
-              max="550"
-              step="5"
-            />
-          </div>
+					<div id="range6div" style="position: fixed">
+						<a id="range6a" style="color: white">300ms</a>
+						<input
+							type="range"
+							class="ms-range"
+							id="range6"
+							value="300"
+							min="100"
+							max="550"
+							step="5"
+						/>
+					</div>
 
-          <div id="range6div" style="position: fixed">
-            <a id="range6a" style="color: white">300ms</a>
-            <input
-              type="range"
-              class="ms-range"
-              id="range6"
-              value="300"
-              min="100"
-              max="550"
-              step="5"
-            />
-          </div>
+					<div id="range7div" style="position: fixed">
+						<a id="range7a" style="color: white">300ms</a>
+						<input
+							type="range"
+							class="ms-range"
+							id="range7"
+							value="300"
+							min="100"
+							max="550"
+							step="5"
+						/>
+					</div>
 
-          <div id="range7div" style="position: fixed">
-            <a id="range7a" style="color: white">300ms</a>
-            <input
-              type="range"
-              class="ms-range"
-              id="range7"
-              value="300"
-              min="100"
-              max="550"
-              step="5"
-            />
-          </div>
+					<div id="range8div" style="position: fixed">
+						<a id="range8a" style="color: white">300ms</a>
+						<input
+							type="range"
+							class="ms-range"
+							id="range8"
+							value="300"
+							min="100"
+							max="550"
+							step="5"
+						/>
+					</div>
 
-          <div id="range8div" style="position: fixed">
-            <a id="range8a" style="color: white">300ms</a>
-            <input
-              type="range"
-              class="ms-range"
-              id="range8"
-              value="300"
-              min="100"
-              max="550"
-              step="5"
-            />
-          </div>
+					<div id="range9div" style="position: fixed">
+						<a id="range9a" style="color: white">300ms</a>
+						<input
+							type="range"
+							class="ms-range"
+							id="range9"
+							value="300"
+							min="100"
+							max="550"
+							step="5"
+						/>
+					</div>
 
-          <div id="range9div" style="position: fixed">
-            <a id="range9a" style="color: white">300ms</a>
-            <input
-              type="range"
-              class="ms-range"
-              id="range9"
-              value="300"
-              min="100"
-              max="550"
-              step="5"
-            />
-          </div>
+					<div id="range10div" style="position: fixed">
+						<a id="range10a" style="color: white">300ms</a>
+						<input
+							type="range"
+							class="ms-range"
+							id="range10"
+							value="300"
+							min="100"
+							max="550"
+							step="5"
+						/>
+					</div>
+				</div>
+			</div>
+		</div>
 
-          <div id="range10div" style="position: fixed">
-            <a id="range10a" style="color: white">300ms</a>
-            <input
-              type="range"
-              class="ms-range"
-              id="range10"
-              value="300"
-              min="100"
-              max="550"
-              step="5"
-            />
-          </div>
-        </div>
-      </div>
-    </div>
+		<div id="tip"></div>
 
-    <div id="tip"></div>
-
-    <div class="clock">
-      <div class="outer-clock-face">
-        <div class="marking marking-one"></div>
-        <div class="marking marking-two"></div>
-        <div class="marking marking-three"></div>
-        <div class="marking marking-four"></div>
-        <div class="inner-clock-face">
-          <div class="hand hour-hand"></div>
-          <div class="hand min-hand"></div>
-          <div class="hand second-hand"></div>
-        </div>
-      </div>
-    </div>
-    <script src="IDrawable.js"></script>
-    <script src="util.js"></script>
-    <script src="BaseLogic.js"></script>
-    <script src="PlayerLogic.js"></script>
-    <script src="Curve.js"></script>
-    <script src="ClosedCurve.js"></script>
-    <script src="Tree.js"></script>
-    <script src="Warder.js"></script>
-    <script src="Eraser.js"></script>
-    <script src="PlayerTable.js"></script>
-    <script src="SpeedCounter.js"></script>
-    <script src="Camp.js"></script>
-    <script src="Area.js"></script>
-    <script src="Player.js"></script>
-    <script src="script.js"></script>
-    <script src="clock.js"></script>
-    <script
-      src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js"
-      integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2"
-      crossorigin="anonymous"
-    ></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-  </body>
+		<div class="clock">
+			<div class="outer-clock-face">
+				<div class="marking marking-one"></div>
+				<div class="marking marking-two"></div>
+				<div class="marking marking-three"></div>
+				<div class="marking marking-four"></div>
+				<div class="inner-clock-face">
+					<div class="hand hour-hand"></div>
+					<div class="hand min-hand"></div>
+					<div class="hand second-hand"></div>
+				</div>
+			</div>
+		</div>
+		<script src="IDrawable.js"></script>
+		<script src="util.js"></script>
+		<script src="BaseLogic.js"></script>
+		<script src="PlayerLogic.js"></script>
+		<script src="Curve.js"></script>
+		<script src="ClosedCurve.js"></script>
+		<script src="Tree.js"></script>
+		<script src="Warder.js"></script>
+		<script src="Eraser.js"></script>
+		<script src="PlayerTable.js"></script>
+		<script src="ToolPanel.js"></script>
+		<script src="SpeedCounter.js"></script>
+		<script src="Camp.js"></script>
+		<script src="Area.js"></script>
+		<script src="Player.js"></script>
+		<script src="globals.js"></script>
+		<script src="script.js"></script>
+		<script src="clock.js"></script>
+		<script
+			src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js"
+			integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2"
+			crossorigin="anonymous"
+		></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+	</body>
 </html>

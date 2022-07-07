@@ -55,7 +55,7 @@ class PlayerTable extends EventTarget {
 		});
 		//#endregion
 		this.selectionChangedEvent = new Event("selectionchanged");
-		this.checkedIndex = 0;
+		this.lastCheckedIndex = 0;
 		this.setCheckedPlayerIndex(0);
 		this.onselectionchanged = () => {};
 		this.addEventListener("selectionchanged", () => {
@@ -66,7 +66,7 @@ class PlayerTable extends EventTarget {
 	setCheckedPlayerIndex(i) {
 		if (i < 0 || i > this.cells.length - 1) return;
 
-		this.checkedIndex = i;
+		this.lastCheckedIndex = i;
 		this.cells.forEach((cell) => {
 			cell.setPositionIndex(PlayerCell.normalPaletteIndex);
 			cell.checked = false;
@@ -76,8 +76,18 @@ class PlayerTable extends EventTarget {
 		this.dispatchEvent(this.selectionChangedEvent);
 	}
 
+	restoreCheck() {
+		this.cells[this.lastCheckedIndex].setPositionIndex(
+			PlayerCell.checkedPaletteIndex
+		);
+		refreshPlayerCanvas()
+	}
+
 	uncheckAll() {
-		this.cells.forEach((cell) => {});
+		this.cells.forEach((cell) => {
+			cell.setPositionIndex(PlayerCell.normalPaletteIndex);
+		});
+		refreshPlayerCanvas();
 	}
 
 	onMouseDown(e) {

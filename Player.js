@@ -14,19 +14,21 @@ class Player {
 		this.proceedCalculation();
 	}
 
+	//this is the only method to manage players logics focus
 	switchTo(mode) {
-		this.activeLogic.isFocused = true;
 		switch (mode) {
-			case PlayerInteractionMode.AREAS:
+			case InteractionMode.AREAS:
 				this.activeLogic = this._area;
+				this._area.isFocused = true;
+				this._speedCounter.isFocused = false;
 				break;
-			case PlayerInteractionMode.MS:
+			case InteractionMode.MS:
 				this.activeLogic = this._speedCounter;
-				break;
-			case PlayerInteractionMode.NONE:
-				this.activeLogic.isFocused = false;
+				this._speedCounter.isFocused = true;
+				this._area.isFocused = false;
 				break;
 			default:
+				this.activeLogic.isFocused = false;
 				break;
 		}
 	}
