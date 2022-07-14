@@ -74,25 +74,25 @@ window.onload = function () {
 	Warder.observerImage.src = "media/obs_icon.png";
 	Warder.sentryImage.src = "media/sentry_icon.png";
 
-	for (let i = 1; i <= 10; i++) {
-		let rowBox = document
-			.getElementById("player" + i)
-			.getBoundingClientRect();
-		let slider = document.getElementById("range" + i);
-		let div = document.getElementById("range" + i + "div");
-		let text = document.getElementById("range" + i + "a");
-		if (i != 1) slider.style.display = "none"; // 1st is selected
-		div.style.top =
-			rowBox.y +
-			rowBox.height / 2 -
-			div.getBoundingClientRect().height / 2 +
-			"px";
-		slider.oninput = function () {
-			players[i - 1].setSpeedCounterMs(slider.value);
-			text.innerHTML = slider.value + "ms";
-			refreshMain(null);
-		};
-	}
+	//for (let i = 1; i <= 10; i++) {
+	//	let rowBox = document
+	//		.getElementById("player" + i)
+	//		.getBoundingClientRect();
+	//	let slider = document.getElementById("range" + i);
+	//	let div = document.getElementById("range" + i + "div");
+	//	let text = document.getElementById("range" + i + "a");
+	//	if (i != 1) slider.style.display = "none"; // 1st is selected
+	//	div.style.top =
+	//		rowBox.y +
+	//		rowBox.height / 2 -
+	//		div.getBoundingClientRect().height / 2 +
+	//		"px";
+	//	slider.oninput = function () {
+	//		players[i - 1].setSpeedCounterMs(slider.value);
+	//		text.innerHTML = slider.value + "ms";
+	//		refreshMain(null);
+	//	};
+	//}
 };
 
 
@@ -112,12 +112,12 @@ window.onresize = function () {
 	refreshMain(null);
 };
 
-timeSlider.oninput = function (e) {
-	playerTable.timer.setMinutes(timeSlider.value);
-	recalculateAllPlayers();
-	refreshMain();
-	refreshPlayerCanvas();
-};
+//timeSlider.oninput = function (e) {
+//	playerTable.timer.setMinutes(timeSlider.value);
+//	recalculateAllPlayers();
+//	refreshMain();
+//	refreshPlayerCanvas();
+//};
 
 canvas.onmousedown = function (e) {
 	MOUSE_BUTTON_PRESSED = e.button;
@@ -250,10 +250,12 @@ playerCanvas.onmousedown = function (e) {
 playerTable.onselectionchanged = () => {
 	players.forEach((player) => {
 		player.switchTo(InteractionMode.NONE);
-	});
-	players[playerTable.lastCheckedIndex].switchTo(toolPanel.checkedMode);
-	toolPanel.setCheckedMode(toolPanel.lastPlayerCheckedMode)
+	}); //uncheck all
+	players[playerTable.lastCheckedIndex].switchTo(toolPanel.lastCheckedPlayerMode); //switch current player to current mode
+	toolPanel.setCheckedMode(toolPanel.lastCheckedPlayerMode)
 };
+
+playerTable.addEventListener("requestRefresh", refreshPlayerCanvas)
 
 toolPanel.onselectionchanged = ()=>{
 	players[playerTable.lastCheckedIndex].switchTo(toolPanel.checkedMode);

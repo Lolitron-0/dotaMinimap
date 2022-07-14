@@ -3,7 +3,7 @@ class ToolPanel extends EventTarget {
 		super();
 		this.buttons = [];
 		this.checkedMode = InteractionMode.AREAS;
-		this.lastPlayerCheckedMode = InteractionMode.AREAS
+		this.lastCheckedPlayerMode = InteractionMode.AREAS
 		this.onselectionchanged = () => {};
 
 		const buttonIds = ["areamode", "speedmode", "wardmode", "erasemode"];
@@ -15,7 +15,7 @@ class ToolPanel extends EventTarget {
 				this.buttons
 					.filter(
 						//do not uncheck this (we cant insert in front of inner callbacks)
-						(button) => button.element.id != newButton.element.id
+						(button) => button.id != newButton.id
 					)
 					.forEach((button) => {
 						//uncheck others
@@ -29,9 +29,8 @@ class ToolPanel extends EventTarget {
 
 	setCheckedMode(mode) {
 		this.buttons.find(
-			(button) => (button.id = convertInteractionModeToToolButtonId(mode))
+			(button) => (button.id == modeToId(mode))
 		).setChecked(true);
-		//TODO: нужно триггерить весь пул онкликов или по-другому обрабатывать в контейнере
 	}
 
 	//returns a ToolButton (or proper inheritor) object with added onClick callback
@@ -52,7 +51,7 @@ class ToolPanel extends EventTarget {
 				object.setOnToggleOn(() => {
 					warder.isFocused = true;
 					playerTable.uncheckAll()
-					this.checkedMode = convertToolButtonIdToInteractionMode(id);
+					this.checkedMode = idToMode(id);
 				});
 
 				object.setOnToggleOff(() => {
@@ -65,7 +64,7 @@ class ToolPanel extends EventTarget {
 				object.setOnToggleOn(() => {
 					eraser.isFocused = true;
 					playerTable.uncheckAll()
-					this.checkedMode = convertToolButtonIdToInteractionMode(id);
+					this.checkedMode = idToMode(id);
 				});
 
 				object.setOnToggleOff(() => {
@@ -76,8 +75,8 @@ class ToolPanel extends EventTarget {
 				object = new ToolButton(id);
 
 				object.setOnToggleOn(() => {
-					this.checkedMode = convertToolButtonIdToInteractionMode(id);
-					this.lastPlayerCheckedMode = InteractionMode.AREAS;
+					this.checkedMode = idToMode(id);
+					this.lastCheckedPlayerMode = InteractionMode.AREAS;
 				});
 
 				object.setOnToggleOff(() => {});
@@ -86,8 +85,8 @@ class ToolPanel extends EventTarget {
 				object = new ToolButton(id);
 
 				object.setOnToggleOn(() => {
-					this.checkedMode = convertToolButtonIdToInteractionMode(id);
-					this.lastPlayerCheckedMode = InteractionMode.MS;
+					this.checkedMode = idToMode(id);
+					this.lastCheckedPlayerMode = InteractionMode.MS;
 				});
 
 				object.setOnToggleOff(() => {});
@@ -103,6 +102,7 @@ class ToolButton extends EventTarget {
 
 	constructor(id) {
 		super();
+		this.id = id
 		this.element = document.getElementById(id);
 		this._checked = false;
 		this.checkChangedEvent = new Event("checkedchanged");

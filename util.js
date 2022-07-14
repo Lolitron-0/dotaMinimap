@@ -24,6 +24,9 @@ nightTimerImage.src = "media/night_timer.png";
 const hiddenCanvas = document.createElement("canvas");
 const hiddenContext = hiddenCanvas.getContext("2d");
 
+//element to use insert before directly into body
+const insertionElement = document.getElementById("insertionElement");
+
 class Point extends IDrawable {
 	constructor(x, y) {
 		super();
@@ -283,9 +286,8 @@ class InteractionMode {
 	static ERASE = 3;
 }
 
-function isPlayerMode(intMode){
-	return intMode == InteractionMode.AREAS ||
-	intMode == InteractionMode.MS
+function isPlayerMode(intMode) {
+	return intMode == InteractionMode.AREAS || intMode == InteractionMode.MS;
 }
 
 class GroundLevel {
@@ -317,6 +319,12 @@ function det(a, b, c, d) {
 
 function between(a, b, c) {
 	return Math.min(a, b) <= c + EPSILON && c <= Math.max(a, b) + EPSILON;
+}
+
+function closestBound(lowerBound, upperBound, value) {
+	if (Math.abs(value - lowerBound) < Math.abs(value - upperBound))
+		return lowerBound;
+	else return upperBound;
 }
 
 function intersection1D(a, b, c, d) {
@@ -463,36 +471,37 @@ function updateCampSize() {
 
 function getCampGold(camp) {
 	let res = 0;
+	const time = playerTable.timer.getMinutes()
 	switch (camp.type) {
 		case "small":
-			res = 67 + 4 * (timeSlider.value / 7.5);
+			res = 67 + 4 * (time / 7.5);
 			break;
 		case "medium":
-			res = 88 + 4 * (timeSlider.value / 7.5);
+			res = 88 + 4 * (time / 7.5);
 			break;
 		case "big":
-			res = 100 + 4 * (timeSlider.value / 7.5);
+			res = 100 + 4 * (time / 7.5);
 			break;
 		case "ancient":
-			res = 169 + 3 * (timeSlider.value / 7.5);
+			res = 169 + 3 * (time / 7.5);
 			break;
 		case "lane":
 			let numMelee = 3;
 			let numRange = 1;
 			let numCat = 1;
-			if (timeSlider.value >= 15) numMelee++;
-			if (timeSlider.value >= 30) numMelee++;
-			if (timeSlider.value >= 35) numCat++;
-			if (timeSlider.value >= 40) numRange++;
-			if (timeSlider.value >= 45) numMelee++;
+			if (time >= 15) numMelee++;
+			if (time >= 30) numMelee++;
+			if (time >= 35) numCat++;
+			if (time >= 40) numRange++;
+			if (time >= 45) numMelee++;
 
 			res =
 				2 *
-				((37 + timeSlider.value / 7.5) * numMelee +
-					(47 + timeSlider.value / 7.5) * numRange);
+				((37 + time / 7.5) * numMelee +
+					(47 + time / 7.5) * numRange);
 
-			if (timeSlider.value % 5 == 0)
-				res += (65 + timeSlider.value / 7.5) * numCat;
+			if (time % 5 == 0)
+				res += (65 + time / 7.5) * numCat;
 			break;
 
 		default:
@@ -537,7 +546,7 @@ function getLocalMouseEventCoords(parent, e) {
 	return new Point(e.pageX - parent.clientLeft);
 }
 
-function convertToolButtonIdToInteractionMode(id) {
+function idToMode(id) {
 	switch (id) {
 		case "wardmode":
 			return InteractionMode.WARDS;
@@ -552,7 +561,7 @@ function convertToolButtonIdToInteractionMode(id) {
 	}
 }
 
-function convertInteractionModeToToolButtonId(id) {
+function modeToId(id) {
 	switch (id) {
 		case InteractionMode.WARDS:
 			return "wardmode";

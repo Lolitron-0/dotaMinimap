@@ -29,18 +29,7 @@
 					<canvas id="playerCanvas"></canvas>
 				</div>
 				<div style="display: block">
-					<input
-						type="range"
-						class="clock-range"
-						style="width: 100%"
-						value="30"
-						min="10"
-						max="60"
-						step="1"
-            orient="vertical"
-						id="timeSlider"
-					/>
-					<br />
+				
 
 					<div
 						style="
@@ -74,142 +63,12 @@
 						></button>
 					</div>
 				</div>
-
-				<div style="display: block">
-					<div id="range1div" style="position: fixed">
-						<a id="range1a" style="color: white">300ms</a>
-						<input
-							type="range"
-							class="ms-range"
-							id="range1"
-							value="300"
-							min="100"
-							max="550"
-							step="5"
-						/>
-					</div>
-
-					<div id="range2div" style="position: fixed">
-						<a id="range2a" style="color: white">300ms</a>
-						<input
-							type="range"
-							class="ms-range"
-							id="range2"
-							value="300"
-							min="100"
-							max="550"
-							step="5"
-						/>
-					</div>
-
-					<div id="range3div" style="position: fixed">
-						<a id="range3a" style="color: white">300ms</a>
-						<input
-							type="range"
-							class="ms-range"
-							id="range3"
-							value="300"
-							min="100"
-							max="550"
-							step="5"
-						/>
-					</div>
-
-					<div id="range4div" style="position: fixed">
-						<a id="range4a" style="color: white">300ms</a>
-						<input
-							type="range"
-							class="ms-range"
-							id="range4"
-							value="300"
-							min="100"
-							max="550"
-							step="5"
-						/>
-					</div>
-
-					<div id="range5div" style="position: fixed">
-						<a id="range5a" style="color: white">300ms</a>
-						<input
-							type="range"
-							class="ms-range"
-							id="range5"
-							value="300"
-							min="100"
-							max="550"
-							step="5"
-						/>
-					</div>
-
-					<div id="range6div" style="position: fixed">
-						<a id="range6a" style="color: white">300ms</a>
-						<input
-							type="range"
-							class="ms-range"
-							id="range6"
-							value="300"
-							min="100"
-							max="550"
-							step="5"
-						/>
-					</div>
-
-					<div id="range7div" style="position: fixed">
-						<a id="range7a" style="color: white">300ms</a>
-						<input
-							type="range"
-							class="ms-range"
-							id="range7"
-							value="300"
-							min="100"
-							max="550"
-							step="5"
-						/>
-					</div>
-
-					<div id="range8div" style="position: fixed">
-						<a id="range8a" style="color: white">300ms</a>
-						<input
-							type="range"
-							class="ms-range"
-							id="range8"
-							value="300"
-							min="100"
-							max="550"
-							step="5"
-						/>
-					</div>
-
-					<div id="range9div" style="position: fixed">
-						<a id="range9a" style="color: white">300ms</a>
-						<input
-							type="range"
-							class="ms-range"
-							id="range9"
-							value="300"
-							min="100"
-							max="550"
-							step="5"
-						/>
-					</div>
-
-					<div id="range10div" style="position: fixed">
-						<a id="range10a" style="color: white">300ms</a>
-						<input
-							type="range"
-							class="ms-range"
-							id="range10"
-							value="300"
-							min="100"
-							max="550"
-							step="5"
-						/>
-					</div>
-				</div>
 			</div>
 		</div>
 
 		<div id="tip"></div>
+
+    <div id="insertionElement" style="display: none;"></div>
 
 		<div class="clock">
 			<div class="outer-clock-face">
@@ -233,6 +92,7 @@
 		<script src="Tree.js"></script>
 		<script src="Warder.js"></script>
 		<script src="Eraser.js"></script>
+		<script src="Slider.js"></script>
 		<script src="PlayerTable.js"></script>
 		<script src="ToolPanel.js"></script>
 		<script src="SpeedCounter.js"></script>

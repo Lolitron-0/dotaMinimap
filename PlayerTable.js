@@ -3,6 +3,7 @@ class PlayerTable extends EventTarget {
 	constructor(onload = () => {}) {
 		//setting up initial positions and boundaries
 		super();
+		this.requestRefreshEvent = new Event("requestRefresh");
 		this.cells = [];
 		//#region cells init
 		const opaqueWidth = 80 * PlayerTable.tableScale;
@@ -29,6 +30,9 @@ class PlayerTable extends EventTarget {
 			),
 			PlayerTable.tableScale
 		);
+		this.timer.addEventListener("timerRequestRefersh", () => {
+			this._requestRefresh();
+		});
 
 		this.timer.setOnload(() => {
 			const direBoundary = new Parallelogramm([
@@ -53,6 +57,13 @@ class PlayerTable extends EventTarget {
 			}
 			this.cells[this.cells.length - 1].setOnload(onload);
 		});
+
+		this.cells.forEach((cell) => {
+			cell.addEventListener("cellRequestRefresh", () => {
+				this._requestRefresh();
+			});
+		});
+
 		//#endregion
 		this.selectionChangedEvent = new Event("selectionchanged");
 		this.lastCheckedIndex = 0;
@@ -61,6 +72,14 @@ class PlayerTable extends EventTarget {
 		this.addEventListener("selectionchanged", () => {
 			this.onselectionchanged();
 		});
+	}
+
+	_requestRefresh() {
+		this.dispatchEvent(this.requestRefreshEvent);
+	}
+
+	getPlayerMs(playerIndex) {
+		return this.cells[playerIndex].msSlider.value;
 	}
 
 	setCheckedPlayerIndex(i) {
@@ -80,14 +99,14 @@ class PlayerTable extends EventTarget {
 		this.cells[this.lastCheckedIndex].setPositionIndex(
 			PlayerCell.checkedPaletteIndex
 		);
-		refreshPlayerCanvas()
+		this._requestRefresh();
 	}
 
 	uncheckAll() {
 		this.cells.forEach((cell) => {
 			cell.setPositionIndex(PlayerCell.normalPaletteIndex);
 		});
-		refreshPlayerCanvas();
+		this._requestRefresh();
 	}
 
 	onMouseDown(e) {
@@ -114,12 +133,13 @@ class PlayerTable extends EventTarget {
 	}
 }
 
-class PlayerCell {
+class PlayerCell extends EventTarget {
 	static normalPaletteIndex = 0;
 	static hoveredPaletteIndex = 1;
 	static checkedPaletteIndex = 2;
 
 	constructor(imageSource, parallelogrammBounds, position) {
+		super();
 		this.cellImage = new Image();
 		this.cellImage.src = imageSource;
 		this.localParallelogramm = parallelogrammBounds;
@@ -134,6 +154,29 @@ class PlayerCell {
 		this.time = new TextLine("0 sec", 16, stopWatchIcon);
 		this._updateTextPosition();
 		this.checked = false;
+
+		this.msSlider = new Slider(
+			100,
+			this.absolutePosition
+				.withAddedX(this.imageWidth / 2)
+				.withAddedY(this.imageHeight + 5),
+			"media/boot_icon.png",
+			250,
+			550,
+			10,
+			300
+		);
+		this.msSlider.setMeasureUnits("ms");
+		this._requestRefreshEvent = new Event("cellRequestRefresh");
+
+		this.msSlider.setOninput(() => {
+			recalculateAllPlayers();
+			this._requestRefresh();
+		});
+	}
+
+	_requestRefresh() {
+		this.dispatchEvent(this._requestRefreshEvent);
 	}
 
 	_getPositionsArray(position) {
@@ -196,6 +239,11 @@ class PlayerCell {
 	setPositionIndex(i) {
 		this._positionPalette.setCurrentIndex(i);
 		this._updateTextPosition();
+		this.msSlider.setPosition(
+			this.absolutePosition
+				.withAddedX(this.imageWidth / 2)
+				.withAddedY(this.imageHeight + 5)
+		);
 	}
 
 	setPosition(pos) {
@@ -217,6 +265,12 @@ class PlayerCell {
 
 	get position() {
 		return this._positionPalette.current;
+	}
+
+	get absolutePosition() {
+		return this.position
+			.withAddedX(playerCanvas.offsetLeft)
+			.withAddedY(playerCanvas.offsetTop);
 	}
 
 	get imageWidth() {
@@ -262,7 +316,7 @@ class TextLine extends IDrawable {
 	}
 }
 
-class DotaTimer extends IDrawable {
+class DotaTimer extends EventTarget {
 	constructor(position, scale) {
 		super();
 		this.dayImage = new Image();
@@ -272,10 +326,41 @@ class DotaTimer extends IDrawable {
 		this._minutes = 30;
 		this.position = position;
 		this.scale = scale;
+		this._requestRefreshEvent = new Event("timerRequestRefersh");
+
+		this.timeSlider = new Slider(
+			300,
+			new Point(0, 0),
+			"media/clock_icon.png",
+			10,
+			60,
+			1,
+			30
+		);
+		this.timeSlider.setLabelEnabled(false);
+
+		this.timeSlider.setPosition(
+			this.absolutePosition
+				.withAddedX(this.width / 2)
+				.withAddedY(this.height + 5)
+		);
+		this.timeSlider.setOninput(() => {
+			this.setMinutes(this.timeSlider.value);
+			recalculateAllPlayers();
+			this._requestRefresh();
+		});
+	}
+
+	_requestRefresh() {
+		this.dispatchEvent(this._requestRefreshEvent);
 	}
 
 	setMinutes(minutes) {
 		this._minutes = minutes;
+	}
+
+	getMinutes() {
+		return this._minutes;
 	}
 
 	setPosition(position) {
@@ -320,5 +405,11 @@ class DotaTimer extends IDrawable {
 
 	get height() {
 		return this.dayImage.height * this.scale;
+	}
+
+	get absolutePosition() {
+		return this.position
+			.withAddedX(playerCanvas.offsetLeft)
+			.withAddedY(playerCanvas.offsetTop);
 	}
 }

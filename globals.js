@@ -145,8 +145,6 @@ camps.push(
 );
 //#endregion
 
-const timeSlider = document.getElementById("timeSlider");
-
 let playerTable = new PlayerTable(() => {
 	playerTable.draw(playerCx);
 });
