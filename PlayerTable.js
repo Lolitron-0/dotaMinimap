@@ -56,11 +56,11 @@ class PlayerTable extends EventTarget {
 				this.cells.push(newCell);
 			}
 			this.cells[this.cells.length - 1].setOnload(onload);
-		});
 
-		this.cells.forEach((cell) => {
-			cell.addEventListener("cellRequestRefresh", () => {
-				this._requestRefresh();
+			this.cells.forEach((cell) => {
+				cell.addEventListener("cellRequestRefresh", () => {
+					this._requestRefresh();
+				});
 			});
 		});
 
