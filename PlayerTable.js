@@ -339,11 +339,13 @@ class DotaTimer extends EventTarget {
 		);
 		this.timeSlider.setLabelEnabled(false);
 
-		this.timeSlider.setPosition(
-			this.absolutePosition
-				.withAddedX(this.width / 2)
-				.withAddedY(this.height + 5)
-		);
+		this.nightImage.addEventListener("load", () => {
+			this.timeSlider.setPosition(
+				this.absolutePosition
+					.withAddedX(this.width / 2)
+					.withAddedY(this.height + 5)
+			);
+		});
 		this.timeSlider.setOninput(() => {
 			this.setMinutes(this.timeSlider.value);
 			recalculateAllPlayers();
