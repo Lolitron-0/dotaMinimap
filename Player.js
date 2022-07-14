@@ -40,6 +40,7 @@ class Player {
 
 	proceedCalculation() {
 		this._area.calculate();
+		this._speedCounter.ms = playerTable.getPlayerMs(this.index)
 		this._speedCounter.calculate();
 	}
 
